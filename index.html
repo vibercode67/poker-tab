@@ -8,7 +8,7 @@
 <title>The Tab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap">
 <style>
 /* Layout: one phone-width column on green baize, gold-ruled sections, a four-suit tab bar pinned to the bottom. */
 :root {
@@ -29,9 +29,9 @@
   --suit-red: #b3261e;
   --display: "Playfair Display", "Iowan Old Style", Georgia, serif;
   --body: "Instrument Sans", "Avenir Next", "Segoe UI", sans-serif;
-  --mono: "DM Mono", ui-monospace, Menlo, monospace;
+  --mono: var(--body);
 }
-* { box-sizing: border-box; }
+* { box-sizing: border-box; font-variant-numeric: tabular-nums lining-nums !important; }
 [hidden] { display: none !important; }
 html { background: var(--felt-dark); }
 body {
@@ -49,7 +49,7 @@ button { cursor: pointer; }
 .wrap { max-width: 600px; margin: 0 auto; padding: calc(env(safe-area-inset-top, 0px) + 18px) 18px calc(env(safe-area-inset-bottom, 0px) + 104px); }
 
 /* type */
-.eyebrow { font: 500 11px/1.2 var(--mono); letter-spacing: .2em; text-transform: uppercase; color: var(--gold); }
+.eyebrow { font: 600 12px/1.3 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--gold); }
 h1, h2, h3 { font-family: var(--display); font-weight: 700; margin: 0; text-wrap: balance; }
 h1 { font-size: 30px; line-height: 1.1; }
 h2 { font-size: 22px; line-height: 1.2; }
@@ -57,7 +57,7 @@ h3 { font-size: 17px; }
 .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 .up { color: var(--up); } .down { color: var(--down); } .even { color: var(--ivory-dim); }
 .dim { color: var(--ivory-dim); }
-.small { font-size: 13px; }
+.small { font-size: 14px; }
 
 /* header */
 .top { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding-bottom: 16px; border-bottom: 1px solid var(--line); margin-bottom: 22px; }
@@ -76,7 +76,7 @@ section { margin-bottom: 30px; }
 .linkname { background: none; border: 0; padding: 0; font: 500 17px var(--body); color: var(--ivory); text-align: left; }
 .linkname:hover { color: var(--gold); }
 .rank { font: 500 12px var(--mono); color: var(--gold-deep); width: 22px; flex: none; }
-.big { font: 500 19px var(--mono); }
+.big { font: 600 20px var(--mono); }
 .empty { text-align: center; padding: 34px 18px; }
 .empty h2 { margin-bottom: 8px; }
 .empty p { margin: 0 auto 18px; max-width: 34ch; color: var(--ivory-dim); }
@@ -84,8 +84,8 @@ section { margin-bottom: 30px; }
 /* stats */
 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border-block: 1px solid var(--line); margin-bottom: 22px; }
 .stats > div { background: var(--felt-deep); padding: 12px 8px; text-align: center; }
-.stats .v { font: 500 18px var(--mono); display: block; margin-top: 4px; }
-.stats .k { font: 500 10px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ivory-dim); }
+.stats .v { font: 600 18px var(--mono); display: block; margin-top: 4px; }
+.stats .k { font: 600 11px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ivory-dim); }
 
 /* buttons */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 10px 22px; border-radius: 999px; border: 1px solid var(--gold); background: var(--gold); color: var(--felt-deep); font-weight: 600; }
@@ -100,7 +100,7 @@ section { margin-bottom: 30px; }
 
 /* forms */
 label.f { display: block; font: 500 11px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ivory-dim); }
-.in { display: block; width: 100%; margin-top: 6px; min-height: 46px; padding: 10px 12px; background: var(--felt-dark); border: 1px solid var(--line); border-radius: 10px; font: 500 17px var(--mono); color: var(--ivory); letter-spacing: 0; text-transform: none; }
+.in { display: block; width: 100%; margin-top: 6px; min-height: 46px; padding: 10px 12px; background: var(--felt-dark); border: 1px solid var(--line); border-radius: 10px; font: 500 18px var(--mono); color: var(--ivory); letter-spacing: 0; text-transform: none; }
 textarea.in { font: 400 15px/1.45 var(--body); min-height: 76px; resize: vertical; }
 .in::placeholder { color: rgba(169, 187, 169, .55); }
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -110,7 +110,7 @@ textarea.in { font: 400 15px/1.45 var(--body); min-height: 76px; resize: vertica
 .picks { display: flex; flex-wrap: wrap; gap: 8px; }
 .pick { border: 1px solid var(--line); background: none; border-radius: 999px; padding: 8px 15px; min-height: 40px; }
 .pick[aria-pressed="true"] { background: var(--ivory); color: var(--felt-deep); border-color: var(--ivory); font-weight: 600; }
-.rate { margin: 12px 0 0; font: 400 13px var(--mono); color: var(--gold); }
+.rate { margin: 12px 0 0; font: 500 14px var(--mono); color: var(--gold); }
 
 /* live table */
 .pot { text-align: center; padding: 20px 12px 18px; border: 1px solid var(--line); border-radius: 120px / 70px; background: radial-gradient(closest-side, rgba(22, 84, 63, .9), rgba(6, 26, 19, .5)); margin-bottom: 22px; }
@@ -127,17 +127,27 @@ textarea.in { font: 400 15px/1.45 var(--body); min-height: 76px; resize: vertica
 .feed { list-style: none; margin: 0; padding: 0; }
 .feed li { display: flex; gap: 12px; padding: 8px 0; font-size: 14px; border-top: 1px dashed rgba(244, 236, 214, .1); }
 .feed li:first-child { border-top: 0; }
-.feed time { font: 400 12px var(--mono); color: var(--ivory-dim); width: 68px; flex: none; padding-top: 2px; }
+.feed time { font: 400 13px var(--mono); color: var(--ivory-dim); width: 72px; flex: none; padding-top: 2px; }
 .warn { border-left: 2px solid var(--gold); padding: 6px 0 6px 12px; margin: 12px 0; font-size: 14px; color: var(--gold); }
 .note { font-family: var(--display); font-style: italic; color: var(--ivory); margin: 10px 0 0; }
+
+/* chip tally */
+.tally { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-top: 14px; background: rgba(6, 26, 19, .55); }
+.tally-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.tally-top strong { font-size: 19px; }
+.tally .bar { height: 6px; background: rgba(244, 236, 214, .12); border-radius: 3px; overflow: hidden; margin: 9px 0; }
+.tally .bar i { display: block; height: 100%; background: var(--gold); }
+.tally-msg { font-size: 15px; font-weight: 500; color: var(--gold); }
+.tally.ok .bar i { background: var(--up); } .tally.ok .tally-msg { color: var(--up); }
+.tally.over .bar i { background: var(--down); } .tally.over .tally-msg { color: var(--down); }
 
 /* tables */
 .tbl-scroll { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 14px; }
-th { font: 500 10px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ivory-dim); text-align: right; padding: 6px 0 6px 10px; }
+th { font: 600 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ivory-dim); text-align: right; padding: 6px 0 6px 10px; }
 td { padding: 8px 0 8px 10px; text-align: right; border-top: 1px solid rgba(244, 236, 214, .08); white-space: nowrap; }
 th:first-child, td:first-child { text-align: left; padding-left: 0; }
-td.num { font-size: 13px; }
+td.num { font-size: 15px; }
 
 /* log */
 details.sess { border-top: 1px solid rgba(244, 236, 214, .08); }
@@ -199,7 +209,7 @@ nav.tabs button[aria-current="page"] { color: var(--gold); border-top-color: var
 .gate form { width: 100%; max-width: 280px; }
 .pin { text-align: center; text-transform: uppercase; letter-spacing: .5em; padding-left: calc(12px + .5em); font-size: 26px; min-height: 60px; }
 .err { color: var(--down); font-size: 14px; min-height: 21px; margin: 10px 0; }
-.demo { margin-top: 26px; font: 400 12px/1.6 var(--mono); color: var(--ivory-dim); max-width: 34ch; }
+.demo { margin-top: 26px; font: 400 13px/1.6 var(--mono); color: var(--ivory-dim); max-width: 34ch; }
 
 .toast { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 84px); transform: translateX(-50%); z-index: 20; background: var(--ivory); color: var(--felt-deep); padding: 9px 18px; border-radius: 999px; font-size: 14px; font-weight: 500; max-width: calc(100% - 36px); text-align: center; }
 @media (max-width: 380px) { .grid3 { grid-template-columns: 1fr 1fr; } .grid3 > :first-child { grid-column: 1 / -1; } .pot .amt { font-size: 34px; } }
@@ -283,7 +293,7 @@ const store = REMOTE ? remoteStore : localStore;
 /* ---------- state ---------- */
 let S = null, version = 0, role = null;
 let pin = ls.get("pin"), hostPin = ls.get("hostPin");
-const ui = { tab: "tonight", player: null, sheet: null, draft: null, me: ls.get("me") };
+const ui = { tab: "tonight", player: null, sheet: null, draft: null, txOpt: 0, me: ls.get("me") };
 
 function normalize(s) {
   s = s && typeof s === "object" ? s : {};
@@ -326,19 +336,37 @@ function balances(filter) {
 }
 const seasonBalances = () => balances(s => !s.settlementId);
 const openSessions = () => S.sessions.filter(s => s.status === "closed" && !s.settlementId);
-function transfers(bal) {
+// Every option squares the same balances; they differ in who pays whom.
+function settleOptions(bal) {
   const d = [], c = [];
   Object.entries(bal).forEach(([id, v]) => { if (v < 0) d.push({ id, v: -v }); else if (v > 0) c.push({ id, v }); });
-  d.sort((a, b) => b.v - a.v); c.sort((a, b) => b.v - a.v);
-  const out = []; let i = 0, j = 0;
-  while (i < d.length && j < c.length) {
-    const a = Math.min(d[i].v, c[j].v);
-    out.push({ from: d[i].id, to: c[j].id, amount: a, paid: false });
-    d[i].v -= a; c[j].v -= a;
-    if (!d[i].v) i++; if (!c[j].v) j++;
-  }
-  return out;
+  if (!d.length || !c.length) return [];
+  const desc = (a, b) => b.v - a.v, asc = (a, b) => a.v - b.v;
+  const pair = (ds, cs) => {
+    ds = ds.map(x => ({ ...x })); cs = cs.map(x => ({ ...x }));
+    const out = []; let i = 0, j = 0;
+    while (i < ds.length && j < cs.length) {
+      const a = Math.min(ds[i].v, cs[j].v);
+      out.push({ from: ds[i].id, to: cs[j].id, amount: a, paid: false });
+      ds[i].v -= a; cs[j].v -= a;
+      if (!ds[i].v) i++; if (!cs[j].v) j++;
+    }
+    return out;
+  };
+  const hub = [...c].sort(desc)[0];
+  const line = [...d.map(x => ({ id: x.id, v: -x.v })), ...c].sort(asc), chain = []; let run = 0;
+  for (let i = 0; i < line.length - 1; i++) { run -= line[i].v; if (run > 0) chain.push({ from: line[i].id, to: line[i + 1].id, amount: run, paid: false }); }
+  const all = [
+    { kind: "fewest", tx: pair([...d].sort(desc), [...c].sort(desc)) },
+    { kind: "pairing", tx: pair([...d].sort(asc), [...c].sort(asc)) },
+    { kind: "pairing", tx: pair([...d].sort(desc), [...c].sort(asc)) },
+    { kind: "hub", hub: hub.id, tx: [...d.map(x => ({ from: x.id, to: hub.id, amount: x.v, paid: false })), ...c.filter(x => x.id !== hub.id).map(x => ({ from: hub.id, to: x.id, amount: x.v, paid: false }))] },
+    { kind: "chain", tx: chain }
+  ];
+  const seen = new Set();
+  return all.filter(o => { const k = o.tx.map(t => `${t.from}>${t.to}:${t.amount}`).sort().join("|"); if (seen.has(k)) return false; seen.add(k); return true; });
 }
+const optionLabel = o => ({ fewest: "Fewest payments", pairing: "Same total, paired differently", hub: `${pname(o.hub)} collects from everyone who owes, then pays the other winners`, chain: "Down the line: nobody pays more than one person" }[o.kind]);
 
 /* ---------- loading and saving ---------- */
 async function load() {
@@ -381,13 +409,13 @@ function render() {
   const app = $("#app");
   if (!S) { app.innerHTML = gateView(); return; }
   document.title = S.group.name;
-  const season = S.settlements.length + 1, n = openSessions().length;
+  const n = openSessions().length;
   const body = ui.player ? playerView(ui.player) : { tonight: tonightView, ledger: ledgerView, log: logView, hands: handsView }[ui.tab]();
   app.innerHTML = `
   <div class="wrap">
     <header class="top">
       <div>
-        <div class="eyebrow">Season ${season} &middot; ${n} ${n === 1 ? "night" : "nights"} on the tab</div>
+        <div class="eyebrow">${n} ${n === 1 ? "night" : "nights"} on the tab</div>
         <h1>${esc(S.group.name)}</h1>
       </div>
       <button class="hostbtn ${isHost() ? "on" : ""}" data-act="${isHost() ? "settings" : "host-open"}">${isHost() ? "Host" : "Host sign-in"}</button>
@@ -448,7 +476,7 @@ function startView() {
       ${S.players.map(p => `<button class="pick" data-act="pick" data-id="${p.id}" aria-pressed="${d.picked.includes(p.id)}">${esc(p.name)}</button>`).join("") || `<span class="dim small">No players yet. Add the first name below.</span>`}
     </div>
     <form class="inline" data-form="roster" style="margin-top:14px">
-      <label class="f">New player<input class="in" id="roster-name" placeholder="Nathan" maxlength="24" autocomplete="off" style="font-family:var(--body)"></label>
+      <label class="f">New player<input class="in" id="roster-name" maxlength="24" autocomplete="off" style="font-family:var(--body)"></label>
       <button class="btn ghost">Add</button>
     </form>
     <div class="actions"><button class="btn wide" data-act="start">Deal them in</button></div>
@@ -486,18 +514,19 @@ function liveView(s) {
         </div>`;
       }).join("")}
     </div>
-    ${host ? `
-    <div style="margin-top:16px">
+    ${host ? `<div id="tally">${tallyView(s)}</div>
+    <div style="margin-top:20px">
       ${others.length ? `<div class="eyebrow" style="margin-bottom:10px">Seat a latecomer</div><div class="picks">${others.map(pl => `<button class="pick" data-act="seat-add" data-id="${pl.id}">+ ${esc(pl.name)}</button>`).join("")}</div>` : ""}
       <form class="inline" data-form="latecomer" style="margin-top:12px">
-        <label class="f">Someone new<input class="in" id="late-name" placeholder="Name" maxlength="24" autocomplete="off" style="font-family:var(--body)"></label>
+        <label class="f">Someone new<input class="in" id="late-name" maxlength="24" autocomplete="off" style="font-family:var(--body)"></label>
         <button class="btn ghost">Seat</button>
       </form>
     </div>` : ""}
   </section>
   <section>
-    <div class="sec-head"><h2>Chips to cash</h2></div>
+    <div class="sec-head"><h2>What's a stack worth?</h2></div>
     <div class="panel pad">
+      <p class="dim small" style="margin:0 0 12px">A quick calculator. Type any number of chips to see what they're worth in real money tonight. It doesn't change anything on the tab.</p>
       <div class="inline">
         <label class="f">Chips<input class="in" id="conv-chips" inputmode="decimal" placeholder="${chipsFmt(s.chipsPerBuyin)}"></label>
         <div class="big" id="conv-out" style="padding-bottom:10px;min-width:96px;text-align:right">${money(s.cashPerBuyin)}</div>
@@ -508,7 +537,7 @@ function liveView(s) {
   <section id="closeout">${closeoutView(s)}</section>
   <section>
     <div class="sec-head"><h2>Tonight's action</h2></div>
-    ${host ? `<label class="f" for="sess-notes">Notes for the log<textarea class="in" id="sess-notes" data-notes placeholder="Marco's birthday, dealer's choice after midnight">${esc(s.notes || "")}</textarea></label><div style="height:14px"></div>`
+    ${host ? `<label class="f" for="sess-notes">Notes for the log<textarea class="in" id="sess-notes" data-notes-for="${s.id}">${esc(s.notes || "")}</textarea></label><div style="height:14px"></div>`
            : (s.notes ? `<p class="note">${esc(s.notes)}</p>` : "")}
     <ul class="feed">
       ${[...s.entries].reverse().map(e => { const first = s.entries.find(x => x.playerId === e.playerId) === e;
@@ -517,18 +546,28 @@ function liveView(s) {
   </section>`;
 }
 
+const countedChips = s => seats(s).reduce((a, id) => a + (Number(s.counts[id]) || 0), 0);
+const blankCounts = s => seats(s).filter(id => s.counts[id] == null || s.counts[id] === "").length;
+const balanced = s => Math.abs(countedChips(s) - toChips(s, pot(s))) < 0.005;
+function tallyHtml(counted, issued, blanks) {
+  const left = Math.round((issued - counted) * 100) / 100;
+  const pct = Math.max(0, Math.min(100, issued ? counted / issued * 100 : 0));
+  const state = left < 0 ? "over" : left === 0 && !blanks ? "ok" : "";
+  const msg = left < 0 ? `${chipsFmt(-left)} too many. Recount a stack.`
+    : left > 0 ? `${chipsFmt(left)} still to count`
+    : blanks ? "Adds up. Enter 0 for anyone who busted." : "Every chip accounted for";
+  return `<div class="tally ${state}" role="status"><div class="tally-top"><span>Chips counted</span><strong>${chipsFmt(counted)} of ${chipsFmt(issued)}</strong></div><div class="bar"><i style="width:${pct}%"></i></div><div class="tally-msg">${msg}</div></div>`;
+}
+const tallyView = s => tallyHtml(countedChips(s), toChips(s, pot(s)), blankCounts(s));
+
 function closeoutView(s) {
-  const host = isHost(), r = results(s), ids = seats(s);
-  const missing = ids.filter(id => s.counts[id] == null || s.counts[id] === "").length;
+  const host = isHost(), r = results(s), ok = r && balanced(s);
   let h = `<div class="sec-head"><h2>Cash-out</h2></div>`;
-  if (!r) {
-    h += `<p class="dim small">${host ? `Enter a final chip count for ${missing === ids.length ? "each player" : missing + " more player" + (missing === 1 ? "" : "s")} to see who's up and close the night.` : "Results appear once the host counts the chips."}</p>`;
-  } else {
-    const off = Math.round((r.counted - r.issued) * 100) / 100;
-    if (off) h += `<p class="warn">Counted ${chipsFmt(r.counted)} chips, but ${chipsFmt(r.issued)} were bought. ${chipsFmt(Math.abs(off))} ${off > 0 ? "extra" : "missing"}. Payouts are scaled to the chips counted so the tab still balances.</p>`;
-    h += resultsTable(r.res);
-  }
-  if (host) h += `<div class="actions"><button class="btn" data-act="close-session" ${r ? "" : "disabled"}>Close the night</button><button class="btn danger" data-act="cancel-session" data-confirm>Scrap this session</button></div>`;
+  if (ok) h += resultsTable(r.res);
+  else h += `<p class="dim small">${!host ? "Results appear once the host counts the chips."
+    : r ? "The count has to match the chips in play before the night can close. Check the tally above."
+    : "Enter everyone's final chip count above. Once it adds up to the chips in play, you'll see who's up and can close the night."}</p>`;
+  if (host) h += `<div class="actions"><button class="btn" data-act="close-session" ${ok ? "" : "disabled"}>Close the night</button><button class="btn danger" data-act="cancel-session" data-confirm>Scrap this session</button></div>`;
   return h;
 }
 function resultsTable(res) {
@@ -542,7 +581,7 @@ function resultsTable(res) {
 function ledgerView() {
   const bal = seasonBalances(), open = openSessions();
   const rows = Object.entries(bal).sort((a, b) => b[1] - a[1]);
-  const tx = transfers(bal);
+  const opts = settleOptions(bal), oi = opts.length ? ui.txOpt % opts.length : 0, tx = opts.length ? opts[oi].tx : [];
   const me = ui.me && S.players.find(p => p.id === ui.me);
   let h = "";
   if (me) h += `<div class="mine"><div><div class="eyebrow">Your tab</div><button class="linkname" data-act="player" data-id="${me.id}" style="margin-top:4px">${esc(me.name)}</button></div><div class="amt num ${tone(bal[me.id] || 0)}">${signed(bal[me.id] || 0)}</div></div>`;
@@ -554,17 +593,18 @@ function ledgerView() {
       <div class="panel">${rows.map(([id, v], i) => `<div class="row"><span class="rank">${i + 1}</span><div class="who"><button class="linkname" data-act="player" data-id="${id}">${esc(pname(id))}</button></div><span class="big ${tone(v)}">${signed(v)}</span></div>`).join("")}</div>
     </section>
     <section>
-      <div class="sec-head"><h2>If you settled today</h2></div>
+      <div class="sec-head"><h2>If you settled today</h2>${opts.length > 1 ? `<span class="dim small">Option ${oi + 1} of ${opts.length}</span>` : ""}</div>
       ${tx.length ? `<div class="panel">${tx.map(t => `<div class="xfer"><div class="t">${esc(pname(t.from))}<span class="arrow">pays</span>${esc(pname(t.to))}</div><span class="num">${money(t.amount)}</span></div>`).join("")}</div>
-        <p class="dim small" style="margin-top:10px">The fewest payments that square everyone up.</p>` : `<p class="dim small">Everyone is level. No payments needed.</p>`}
-      ${isHost() ? `<div class="actions"><button class="btn" data-act="settle" data-confirm>Settle up and start a new season</button></div>` : ""}
+        <p class="dim small" style="margin-top:10px">${esc(optionLabel(opts[oi]))}.${opts.length > 1 ? "" : " With these balances there's only one way to split it."}</p>
+        ${opts.length > 1 ? `<div class="actions"><button class="btn ghost sm" data-act="tx-next">Show another way</button></div>` : ""}` : `<p class="dim small">Everyone is level. No payments needed.</p>`}
+      ${isHost() ? `<div class="actions"><button class="btn" data-act="settle" data-confirm>Settle up this way and clear the tab</button></div>` : ""}
     </section>`;
   }
   if (S.settlements.length) {
     h += `<section><div class="sec-head"><h2>Past settle-ups</h2></div>
       ${[...S.settlements].reverse().map((st, i) => {
-        const seasonNo = S.settlements.length - i, latest = i === 0;
-        return `<div class="panel" style="margin-bottom:12px"><div class="row"><div class="who"><strong>Season ${seasonNo}</strong> <span class="dim small">settled ${esc(fmtDate(st.date))} &middot; ${st.sessionIds.length} night${st.sessionIds.length === 1 ? "" : "s"}</span></div></div>
+        const latest = i === 0;
+        return `<div class="panel" style="margin-bottom:12px"><div class="row"><div class="who"><strong>Settled ${esc(fmtDate(st.date))}</strong> <span class="dim small">${st.sessionIds.length} night${st.sessionIds.length === 1 ? "" : "s"}</span></div></div>
           ${st.transfers.map((t, k) => `<div class="xfer"><div class="t">${esc(pname(t.from))}<span class="arrow">pays</span>${esc(pname(t.to))}</div><span class="num">${money(t.amount)}</span>
             ${isHost() ? `<button class="paid ${t.paid ? "on" : ""}" data-act="paid" data-id="${st.id}" data-k="${k}" aria-pressed="${!!t.paid}">${t.paid ? "Paid" : "Mark paid"}</button>` : `<span class="paid ${t.paid ? "on" : ""}">${t.paid ? "Paid" : "Owed"}</span>`}</div>`).join("") || `<div class="row dim small">Everyone finished level.</div>`}
           ${isHost() && latest && !liveSession() ? `<div class="row"><button class="btn sm danger" data-act="unsettle" data-id="${st.id}" data-confirm>Undo this settle-up</button></div>` : ""}
@@ -586,7 +626,7 @@ function playerView(pid) {
   <button class="back" data-act="back">&larr; Back</button>
   <div class="sec-head" style="align-items:center"><div><div class="eyebrow">Player</div><h2 style="font-size:28px;margin-top:4px">${esc(pname(pid))}</h2></div>
     <button class="btn sm ghost" data-act="me" data-id="${pid}">${ui.me === pid ? "This is you" : "This is me"}</button></div>
-  <div class="mine" style="margin-top:8px"><div><div class="eyebrow">On the tab this season</div><div class="small dim" style="margin-top:4px">${season > 0 ? "The table owes them" : season < 0 ? "They owe the table" : "All square"}</div></div><div class="amt num ${tone(season)}">${signed(season)}</div></div>
+  <div class="mine" style="margin-top:8px"><div><div class="eyebrow">On the tab right now</div><div class="small dim" style="margin-top:4px">${season > 0 ? "The table owes them" : season < 0 ? "They owe the table" : "All square"}</div></div><div class="amt num ${tone(season)}">${signed(season)}</div></div>
   ${inLive ? `<p class="warn">Playing tonight: ${money(buyin(live, pid))} in so far. Tonight counts once the session is closed.</p>` : ""}
   <div class="stats">
     <div><span class="k">All-time</span><span class="v ${tone(life)}">${signed(life)}</span></div>
@@ -627,7 +667,7 @@ function logView() {
       <div class="body">
         <p class="small dim num" style="margin:0 0 10px">${money(s.cashPerBuyin)} bought ${chipsFmt(s.chipsPerBuyin)} chips &middot; ${s.entries.length - ids.length} rebuy${s.entries.length - ids.length === 1 ? "" : "s"}</p>
         ${live ? `<p class="small">${ids.map(id => esc(pname(id))).join(", ")}</p><button class="btn sm ghost" data-act="tab" data-tab="tonight">Go to the table</button>` : resultsTable(s.results)}
-        ${s.notes ? `<p class="note">${esc(s.notes)}</p>` : ""}
+        ${isHost() && !live ? `<label class="f" style="margin-top:14px">Notes<textarea class="in" data-notes-for="${s.id}">${esc(s.notes || "")}</textarea></label>` : s.notes ? `<p class="note">${esc(s.notes)}</p>` : ""}
         ${!live ? `<ul class="feed" style="margin-top:12px">${s.entries.map(e => `<li><time>${fmtTime(e.t)}</time><span>${esc(pname(e.playerId))} <span class="num">${money(e.amount)}</span></span></li>`).join("")}</ul>` : ""}
         ${isHost() && !live && !s.settlementId ? `<div class="actions">${liveSession() ? "" : `<button class="btn sm ghost" data-act="reopen" data-id="${s.id}">Reopen to edit</button>`}<button class="btn sm danger" data-act="del-session" data-id="${s.id}" data-confirm>Delete night</button></div>` : ""}
       </div></details>`;
@@ -648,20 +688,50 @@ const HANDS = [
   ["High card", "Nothing connects. Highest card plays.", "As Jd 8c 6h 2s", 1]
 ];
 const SUIT = { s: "♠︎", h: "♥︎", d: "♦︎", c: "♣︎" };
+const cardRow = (cards, live) => `<div class="cards" role="img" aria-label="${cards}">${cards.split(" ").map((c, k) => { const su = c.slice(-1), rk = c.slice(0, -1); return `<span class="pc ${su === "h" || su === "d" ? "red" : ""} ${k >= live ? "off" : ""}"><b>${rk}</b><i>${SUIT[su]}</i></span>`; }).join("")}</div>`;
 function handsView() {
   return `<section><div class="sec-head"><h2>What beats what</h2></div>
     <div class="ladder eyebrow"><span>Strongest</span><span>Best five cards play</span></div>
     <div class="panel">${HANDS.map(([name, desc, cards, live], i) => `<div class="hand"><span class="n">${i + 1}</span><div><h3>${name}</h3><p>${desc}</p>
-      <div class="cards" role="img" aria-label="Example: ${cards}">${cards.split(" ").map((c, k) => { const su = c.slice(-1), rk = c.slice(0, -1); return `<span class="pc ${su === "h" || su === "d" ? "red" : ""} ${k >= live ? "off" : ""}"><b>${rk}</b><i>${SUIT[su]}</i></span>`; }).join("")}</div></div></div>`).join("")}</div>
+      ${cardRow(cards, live)}</div></div>`).join("")}</div>
     <div class="ladder eyebrow" style="margin-top:8px"><span>Weakest</span></div>
+  </section>
+  <section><div class="sec-head"><h2>The kicker, explained</h2></div>
+    <p class="dim small" style="margin:0 0 12px">A hand is always your best five cards. When two players make the same hand, the leftover cards in those five break the tie. The highest leftover card is the kicker.</p>
+    <div class="panel pad">
+      <p style="margin:0 0 8px"><strong>Nathan</strong> <span class="up small">wins with the king kicker</span></p>
+      ${cardRow("As Ad Kd Js 7s", 3)}
+      <p style="margin:16px 0 8px"><strong>Marco</strong> <span class="dim small">same pair, jack kicker</span></p>
+      ${cardRow("Ah Ad Js 9c 7s", 3)}
+      <p class="dim small" style="margin:14px 0 0">Both have a pair of aces, so the pair can't decide it. Nathan's next card is a king, Marco's is a jack. King wins. If the kickers matched too, you'd compare the next card down, and so on through all five.</p>
+    </div>
   </section>
   <section><div class="sec-head"><h2>Settling arguments</h2></div>
     <div class="panel">
-      <div class="row"><div><strong>Same hand on both sides</strong><div class="small dim">Higher ranks win: a pair of kings beats a pair of nines. Still tied, the next highest side card (the kicker) decides.</div></div></div>
-      <div class="row"><div><strong>Suits never break a tie</strong><div class="small dim">If the best five cards match exactly, split the pot.</div></div></div>
+      <div class="row"><div><strong>Same hand on both sides</strong><div class="small dim">Higher ranks win: a pair of kings beats a pair of nines. Still tied, the kicker decides.</div></div></div>
+      <div class="row"><div><strong>Suits never break a tie</strong><div class="small dim">If the best five cards match exactly, split the pot. An odd chip goes to the first player left of the dealer.</div></div></div>
       <div class="row"><div><strong>The ace swings both ways</strong><div class="small dim">High in A-K-Q-J-10, low in 5-4-3-2-A. It can't wrap around: Q-K-A-2-3 is not a straight.</div></div></div>
       <div class="row"><div><strong>Full houses</strong><div class="small dim">Compare the three of a kind first, then the pair.</div></div></div>
-      <div class="row"><div><strong>Faded cards above</strong><div class="small dim">Those are kickers. They only matter when the main hand ties.</div></div></div>
+      <div class="row"><div><strong>Two pair</strong><div class="small dim">Compare the higher pair first, then the lower pair, then the kicker.</div></div></div>
+      <div class="row"><div><strong>Playing the board</strong><div class="small dim">If the five shared cards are the best hand anyone can make, everyone still in splits the pot.</div></div></div>
+      <div class="row"><div><strong>Cards speak</strong><div class="small dim">The hand is whatever the cards show, even if the player called it wrong.</div></div></div>
+    </div>
+  </section>
+  <section><div class="sec-head"><h2>A hand of hold'em, in order</h2></div>
+    <div class="panel">
+      <div class="row"><span class="rank">1</span><div class="who"><strong>Blinds and deal</strong><div class="small dim">The two players left of the dealer post the small and big blind. Everyone gets two cards face down. First bet starts left of the big blind.</div></div></div>
+      <div class="row"><span class="rank">2</span><div class="who"><strong>The flop</strong><div class="small dim">Three shared cards face up, then a round of betting starting left of the dealer.</div></div></div>
+      <div class="row"><span class="rank">3</span><div class="who"><strong>The turn</strong><div class="small dim">A fourth shared card, then betting.</div></div></div>
+      <div class="row"><span class="rank">4</span><div class="who"><strong>The river</strong><div class="small dim">The fifth and last shared card, then the final betting round.</div></div></div>
+      <div class="row"><span class="rank">5</span><div class="who"><strong>Showdown</strong><div class="small dim">Best five cards from your two plus the five shared. The last player to bet or raise shows first. The dealer button moves one seat left.</div></div></div>
+    </div>
+  </section>
+  <section><div class="sec-head"><h2>House rules worth agreeing on</h2></div>
+    <div class="panel">
+      <div class="row"><div><strong>Minimum raise</strong><div class="small dim">A raise has to be at least as big as the last bet or raise. If someone bets 10, the smallest raise is to 20.</div></div></div>
+      <div class="row"><div><strong>All-in and side pots</strong><div class="small dim">A player who is all-in can only win, from each opponent, as much as they put in themselves. Anything bet beyond that goes into a side pot for the others.</div></div></div>
+      <div class="row"><div><strong>String bets</strong><div class="small dim">Say the amount first or push your chips in one motion. No going back to your stack for more.</div></div></div>
+      <div class="row"><div><strong>Acting out of turn</strong><div class="small dim">Wait for the player before you. A fold or bet out of turn gives away information.</div></div></div>
     </div>
   </section>`;
 }
@@ -744,20 +814,21 @@ const actions = {
   "seat-open"(el) { ui.sheet = { type: "seat", id: el.dataset.id }; renderSheet(); },
   "del-entry"(el) { mutate(st => { const s = st.sessions.find(x => x.status === "live"); if (!s) return false; s.entries = s.entries.filter(e => e.id !== el.dataset.id); seats(s).length; Object.keys(s.counts).forEach(id => { if (!s.entries.some(e => e.playerId === id)) delete s.counts[id]; }); }); },
   "close-session"() {
-    mutate(st => { const s = st.sessions.find(x => x.status === "live"); const r = s && results(s); if (!r) return false; s.results = r.res; s.status = "closed"; s.closedAt = new Date().toISOString(); })
+    mutate(st => { const s = st.sessions.find(x => x.status === "live"); const r = s && results(s); if (!r || !balanced(s)) return false; s.results = r.res; s.status = "closed"; s.closedAt = new Date().toISOString(); })
       .then(ok => { if (ok) { ui.tab = "ledger"; render(); scrollTo(0, 0); toast("Night closed. The tab is updated."); } });
   },
   "cancel-session"() { mutate(st => { st.sessions = st.sessions.filter(s => s.status !== "live"); }); },
   reopen(el) { mutate(st => { if (st.sessions.some(s => s.status === "live")) return false; const s = st.sessions.find(x => x.id === el.dataset.id); if (!s || s.settlementId) return false; s.status = "live"; s.results = {}; }).then(ok => { if (ok) actions.tab({ dataset: { tab: "tonight" } }); }); },
   "del-session"(el) { mutate(st => { st.sessions = st.sessions.filter(s => s.id !== el.dataset.id || s.settlementId); }); },
+  "tx-next"() { ui.txOpt++; render(); },
   settle() {
     mutate(st => {
       const open = st.sessions.filter(s => s.status === "closed" && !s.settlementId);
       if (!open.length) return false;
       const bal = {}; open.forEach(s => Object.entries(s.results).forEach(([id, r]) => (bal[id] = (bal[id] || 0) + r.net)));
-      const rec = { id: uid(), date: today(), balances: bal, transfers: transfers(bal), sessionIds: open.map(s => s.id) };
+      const o = settleOptions(bal), rec = { id: uid(), date: today(), balances: bal, transfers: o.length ? o[ui.txOpt % o.length].tx : [], sessionIds: open.map(s => s.id) };
       open.forEach(s => (s.settlementId = rec.id)); st.settlements.push(rec);
-    }).then(ok => ok && toast("Season settled. Balances are back to zero."));
+    }).then(ok => { if (ok) ui.txOpt = 0; return ok; }).then(ok => ok && toast("Settled. Balances are back to zero."));
   },
   unsettle(el) { mutate(st => { const last = st.settlements[st.settlements.length - 1]; if (!last || last.id !== el.dataset.id) return false; st.sessions.forEach(s => { if (s.settlementId === last.id) s.settlementId = null; }); st.settlements.pop(); }); },
   paid(el) { mutate(st => { const t = (st.settlements.find(x => x.id === el.dataset.id) || { transfers: [] }).transfers[+el.dataset.k]; if (!t) return false; t.paid = !t.paid; }); },
@@ -828,6 +899,10 @@ document.addEventListener("submit", e => { const f = e.target.closest("[data-for
 document.addEventListener("input", e => {
   const t = e.target;
   if (t.dataset.draft && ui.draft) { ui.draft[t.dataset.draft] = t.value; const r = $("#st-rate"); if (r) r.innerHTML = rateLine(ui.draft); }
+  else if (t.dataset.count) {
+    const s = liveSession(), ins = [...document.querySelectorAll("[data-count]")];
+    if (s) $("#tally").innerHTML = tallyHtml(ins.reduce((a, i) => a + (parseFloat(i.value) || 0), 0), toChips(s, pot(s)), ins.filter(i => !i.value.trim()).length);
+  }
   else if (t.id === "conv-chips") { const s = liveSession(), n = parseFloat(t.value); $("#conv-out").textContent = money((isFinite(n) ? n : s.chipsPerBuyin) * chipValue(s)); }
   else if (t.id === "custom-amt") { const s = liveSession(), c = toCents(t.value); $("#custom-rate").textContent = c > 0 ? `${money(c)} buys ${chipsFmt(toChips(s, c))} chips` : "For a half stack or a top-up."; }
 });
@@ -838,9 +913,9 @@ document.addEventListener("change", e => {
     const id = t.dataset.count, raw = t.value.trim(), n = parseFloat(raw);
     if (raw && !(n >= 0)) { toast("Enter a chip count."); return; }
     mutate(st => { const s = st.sessions.find(x => x.status === "live"); if (!s) return false; if (raw) s.counts[id] = n; else delete s.counts[id]; }, { quiet: true })
-      .then(() => { const s = liveSession(), c = $("#closeout"); if (s && c) c.innerHTML = closeoutView(s); });
-  } else if (t.hasAttribute("data-notes")) {
-    mutate(st => { const s = st.sessions.find(x => x.status === "live"); if (!s) return false; s.notes = t.value.trim(); }, { quiet: true });
+      .then(() => { const s = liveSession(), c = $("#closeout"), ty = $("#tally"); if (s && c) c.innerHTML = closeoutView(s); if (s && ty) ty.innerHTML = tallyView(s); });
+  } else if (t.dataset.notesFor) {
+    mutate(st => { const s = st.sessions.find(x => x.id === t.dataset.notesFor); if (!s) return false; s.notes = t.value.trim(); }, { quiet: true }).then(ok => ok && toast("Notes saved"));
   } else if (t.dataset.rename) {
     const v = t.value.trim(); if (!v) return;
     mutate(st => { const p = st.players.find(x => x.id === t.dataset.rename); if (!p) return false; p.name = v; }, { quiet: true }).then(ok => ok && toast("Renamed"));
