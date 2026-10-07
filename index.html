@@ -131,6 +131,30 @@ textarea.in { font: 400 15px/1.45 var(--body); min-height: 76px; resize: vertica
 .warn { border-left: 2px solid var(--gold); padding: 6px 0 6px 12px; margin: 12px 0; font-size: 14px; color: var(--gold); }
 .note { font-family: var(--display); font-style: italic; color: var(--ivory); margin: 10px 0 0; }
 
+/* live table */
+.live-banner { display: flex; align-items: center; justify-content: center; gap: 14px; font: 700 22px var(--body); letter-spacing: .34em; text-transform: uppercase; padding-left: .34em; }
+.beacon { width: 14px; height: 14px; border-radius: 50%; background: #ff5a4d; flex: none; animation: beacon 1.6s infinite; }
+@keyframes beacon { 0% { box-shadow: 0 0 0 0 rgba(255, 90, 77, .65); } 70%, 100% { box-shadow: 0 0 0 14px rgba(255, 90, 77, 0); } }
+.live-sub { text-align: center; margin-top: 6px; }
+.ptable { position: relative; width: 100%; max-width: 440px; aspect-ratio: 1 / 1.3; margin: 26px auto 30px; }
+.ptable.big { aspect-ratio: 1 / 1.62; }
+.ptable .felt { position: absolute; inset: 22% 30%; border-radius: 50%; background: radial-gradient(closest-side, #1f7355, #0f3d2e 88%); border: 9px solid #4a2f1b; box-shadow: 0 0 0 2px var(--gold-deep), inset 0 0 0 2px rgba(0, 0, 0, .28), inset 0 0 0 9px rgba(217, 189, 106, .08), 0 26px 44px rgba(0, 0, 0, .45); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 5px; padding: 12px; }
+.ptable .felt .amt { font: 700 clamp(22px, 7vw, 30px)/1 var(--display); }
+.ptable .felt .small { line-height: 1.3; }
+.seat-node { position: absolute; z-index: 1; transform: translate(-50%, -50%); width: 26.5%; min-width: 84px; background: none; border: 0; padding: 0; display: flex; flex-direction: column; align-items: center; text-align: center; line-height: 1.25; color: var(--ivory); }
+.av { width: 46px; height: 46px; border-radius: 50%; background: var(--card); color: var(--ink); font: 700 16px var(--display); display: grid; place-items: center; box-shadow: 0 0 0 2px var(--gold), 0 6px 12px rgba(0, 0, 0, .45); margin-bottom: 6px; transition: transform .2s, box-shadow .2s; }
+.av.done { box-shadow: 0 0 0 3px var(--up), 0 6px 12px rgba(0, 0, 0, .45); }
+.seat-node:hover .av, .seat-node:focus-visible .av { transform: scale(1.1); }
+.nm { font-weight: 600; font-size: 14px; max-width: 100%; overflow-wrap: anywhere; }
+.sd { font-size: 12px; color: var(--ivory-dim); }
+.enter .seat-node { animation: fade .5s ease backwards; animation-delay: calc(var(--i) * 70ms + .25s); }
+.co-row { display: grid; grid-template-columns: minmax(0, 1fr) 92px 84px; gap: 10px; align-items: center; padding: 12px 0; border-top: 1px solid rgba(244, 236, 214, .08); }
+.co-row:first-child { border-top: 0; }
+.co-row .in { margin: 0; min-height: 42px; text-align: right; padding: 8px 10px; }
+.co-val { text-align: right; display: flex; flex-direction: column; line-height: 1.25; }
+.ovr { display: flex; gap: 10px; align-items: flex-start; margin: 14px 0 4px; font-size: 15px; cursor: pointer; }
+.ovr input { width: 20px; height: 20px; margin: 2px 0 0; flex: none; accent-color: var(--gold); }
+
 /* chip tally */
 .tally { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-top: 14px; background: rgba(6, 26, 19, .55); }
 .tally-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
@@ -210,6 +234,62 @@ nav.tabs button[aria-current="page"] { color: var(--gold); border-top-color: var
 .pin { text-align: center; text-transform: uppercase; letter-spacing: .5em; padding-left: calc(12px + .5em); font-size: 26px; min-height: 60px; }
 .err { color: var(--down); font-size: 14px; min-height: 21px; margin: 10px 0; }
 .demo { margin-top: 26px; font: 400 13px/1.6 var(--mono); color: var(--ivory-dim); max-width: 34ch; }
+
+/* lobby */
+.home { min-height: 100dvh; max-width: 440px; margin: 0 auto; padding: calc(env(safe-area-inset-top, 0px) + 40px) 22px calc(env(safe-area-inset-bottom, 0px) + 32px); display: flex; flex-direction: column; align-items: center; text-align: center; }
+.home .suits { font: 400 18px Georgia, serif; letter-spacing: .6em; padding-left: .6em; color: var(--gold); margin-bottom: 22px; }
+.home h1 { font-size: clamp(38px, 11vw, 52px); line-height: 1.02; margin: 10px 0 0; }
+.rule { display: flex; align-items: center; gap: 12px; width: 100%; max-width: 260px; margin: 22px 0 6px; color: var(--gold); font: 400 13px Georgia, serif; }
+.rule::before, .rule::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.doors { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; margin: 34px 0 40px; }
+.door { --tilt: -3deg; position: relative; aspect-ratio: 5 / 7.4; border: 0; border-radius: 14px; background: var(--card); color: var(--ink); padding: 34px 12px 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 1px 0 #fff inset, 0 18px 34px rgba(0, 0, 0, .42), 0 2px 0 rgba(0, 0, 0, .3); transform: rotate(var(--tilt)); transition: transform .28s cubic-bezier(.2, .8, .2, 1), opacity .22s, box-shadow .28s; }
+.door::after { content: ""; position: absolute; inset: 7px; border: 1px solid rgba(23, 35, 29, .16); border-radius: 9px; pointer-events: none; }
+.door.d2 { --tilt: 3deg; margin-top: 16px; }
+.door.red .corner, .door.red .pip { color: var(--suit-red); }
+.door:hover, .door:focus-visible { transform: rotate(0) translateY(-8px); box-shadow: 0 1px 0 #fff inset, 0 26px 44px rgba(0, 0, 0, .5), 0 2px 0 rgba(0, 0, 0, .3); }
+.door:active { transform: rotate(0) translateY(-2px) scale(.98); }
+.door.go { transform: rotate(0) translateY(-26px) scale(1.06); opacity: 0; }
+.door .corner { position: absolute; top: 13px; left: 14px; font: 700 17px/1 var(--display); display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.door .corner i { font: 400 14px/1 Georgia, serif; }
+.door .corner.br { top: auto; left: auto; bottom: 13px; right: 14px; transform: rotate(180deg); }
+.door .pip { font: 400 44px/1 Georgia, serif; }
+.door-t { font: 700 clamp(18px, 5.4vw, 22px)/1.12 var(--display); text-wrap: balance; }
+.door-s { font-size: 13px; line-height: 1.3; color: #55645a; text-wrap: balance; }
+.door-s .live-dot { background: #2f9e58; }
+.home-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 26px; margin-bottom: 30px; }
+.home-links button { background: none; border: 0; border-bottom: 1px solid var(--line); padding: 6px 0; color: var(--ivory); font-size: 16px; }
+.home-links button span { color: var(--gold); margin-right: 8px; font-family: Georgia, serif; }
+.home-links button:hover { border-color: var(--gold); color: var(--gold); }
+.home .hostbtn { margin-top: auto; }
+.homelink { background: none; border: 0; padding: 0; text-align: left; color: inherit; display: block; min-width: 0; }
+.homelink h1 { margin-top: 6px; }
+.homelink:hover .eyebrow { color: var(--ivory); }
+
+/* motion */
+@keyframes fade { from { opacity: 0; } }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+@keyframes deal { from { opacity: 0; transform: translateY(120px) rotate(calc(var(--tilt) * -5)) scale(.86); } }
+@keyframes sheetup { from { opacity: 0; transform: translateY(48px); } }
+.enter { animation: fade .35s ease both; }
+.enter > * { animation: rise .5s cubic-bezier(.2, .7, .2, 1) backwards; }
+.enter > :nth-child(2) { animation-delay: .07s; } .enter > :nth-child(3) { animation-delay: .14s; }
+.enter > :nth-child(4) { animation-delay: .21s; } .enter > :nth-child(n+5) { animation-delay: .28s; }
+.enter .panel > *, .enter .picks > * { animation: rise .45s cubic-bezier(.2, .7, .2, 1) backwards; }
+.enter .panel > :nth-child(1), .enter .picks > :nth-child(1) { animation-delay: .1s; } .enter .panel > :nth-child(2), .enter .picks > :nth-child(2) { animation-delay: .15s; }
+.enter .panel > :nth-child(3), .enter .picks > :nth-child(3) { animation-delay: .2s; } .enter .panel > :nth-child(4), .enter .picks > :nth-child(4) { animation-delay: .25s; }
+.enter .panel > :nth-child(5) { animation-delay: .3s; } .enter .panel > :nth-child(6) { animation-delay: .35s; } .enter .panel > :nth-child(n+7) { animation-delay: .4s; }
+.home.enter .doors { animation: none; }
+.home.enter .door { animation: deal .8s cubic-bezier(.16, .84, .24, 1) .25s backwards; }
+.home.enter .door.d2 { animation-delay: .4s; }
+.home.enter .home-links, .home.enter .hostbtn { animation-delay: .75s; }
+.gate > * { animation: rise .6s cubic-bezier(.2, .7, .2, 1) backwards; }
+.gate > :nth-child(2) { animation-delay: .08s; } .gate > :nth-child(3) { animation-delay: .16s; } .gate > :nth-child(n+4) { animation-delay: .24s; }
+.scrim.opening { animation: fade .25s ease both; }
+.scrim.opening .sheet { animation: sheetup .38s cubic-bezier(.2, .8, .2, 1) both; }
+.pick, .paid, nav.tabs button, .hostbtn { transition: background-color .18s, color .18s, border-color .18s; }
+.btn { transition: transform .12s, background-color .18s, color .18s; }
+.bar i { transition: width .3s ease, background-color .2s; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 
 .toast { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 84px); transform: translateX(-50%); z-index: 20; background: var(--ivory); color: var(--felt-deep); padding: 9px 18px; border-radius: 999px; font-size: 14px; font-weight: 500; max-width: calc(100% - 36px); text-align: center; }
 @media (max-width: 380px) { .grid3 { grid-template-columns: 1fr 1fr; } .grid3 > :first-child { grid-column: 1 / -1; } .pot .amt { font-size: 34px; } }
@@ -293,7 +373,7 @@ const store = REMOTE ? remoteStore : localStore;
 /* ---------- state ---------- */
 let S = null, version = 0, role = null;
 let pin = ls.get("pin"), hostPin = ls.get("hostPin");
-const ui = { tab: "tonight", player: null, sheet: null, draft: null, txOpt: 0, me: ls.get("me") };
+const ui = { tab: "home", lastKey: null, player: null, sheet: null, draft: null, txOpt: 0, override: false, me: ls.get("me") };
 
 function normalize(s) {
   s = s && typeof s === "object" ? s : {};
@@ -354,19 +434,16 @@ function settleOptions(bal) {
     return out;
   };
   const hub = [...c].sort(desc)[0];
-  const line = [...d.map(x => ({ id: x.id, v: -x.v })), ...c].sort(asc), chain = []; let run = 0;
-  for (let i = 0; i < line.length - 1; i++) { run -= line[i].v; if (run > 0) chain.push({ from: line[i].id, to: line[i + 1].id, amount: run, paid: false }); }
   const all = [
     { kind: "fewest", tx: pair([...d].sort(desc), [...c].sort(desc)) },
     { kind: "pairing", tx: pair([...d].sort(asc), [...c].sort(asc)) },
     { kind: "pairing", tx: pair([...d].sort(desc), [...c].sort(asc)) },
-    { kind: "hub", hub: hub.id, tx: [...d.map(x => ({ from: x.id, to: hub.id, amount: x.v, paid: false })), ...c.filter(x => x.id !== hub.id).map(x => ({ from: hub.id, to: x.id, amount: x.v, paid: false }))] },
-    { kind: "chain", tx: chain }
+    { kind: "hub", hub: hub.id, tx: [...d.map(x => ({ from: x.id, to: hub.id, amount: x.v, paid: false })), ...c.filter(x => x.id !== hub.id).map(x => ({ from: hub.id, to: x.id, amount: x.v, paid: false }))] }
   ];
   const seen = new Set();
   return all.filter(o => { const k = o.tx.map(t => `${t.from}>${t.to}:${t.amount}`).sort().join("|"); if (seen.has(k)) return false; seen.add(k); return true; });
 }
-const optionLabel = o => ({ fewest: "Fewest payments", pairing: "Same total, paired differently", hub: `${pname(o.hub)} collects from everyone who owes, then pays the other winners`, chain: "Down the line: nobody pays more than one person" }[o.kind]);
+const optionLabel = o => ({ fewest: "Fewest payments", pairing: "Same total, paired differently", hub: `${pname(o.hub)} collects from everyone who owes, then pays the other winners` }[o.kind]);
 
 /* ---------- loading and saving ---------- */
 async function load() {
@@ -410,23 +487,54 @@ function render() {
   if (!S) { app.innerHTML = gateView(); return; }
   document.title = S.group.name;
   const n = openSessions().length;
+  const key = ui.player ? "p:" + ui.player : ui.tab, enter = key !== ui.lastKey ? "enter" : "";
+  ui.lastKey = key;
+  if (key === "home") { app.innerHTML = homeView(enter); renderSheet(); return; }
   const body = ui.player ? playerView(ui.player) : { tonight: tonightView, ledger: ledgerView, log: logView, hands: handsView }[ui.tab]();
   app.innerHTML = `
   <div class="wrap">
     <header class="top">
-      <div>
-        <div class="eyebrow">${n} ${n === 1 ? "night" : "nights"} on the tab</div>
+      <button class="homelink" data-act="tab" data-tab="home" aria-label="Back to the lobby">
+        <span class="eyebrow">&lsaquo; Lobby &middot; ${n} ${n === 1 ? "night" : "nights"} on the tab</span>
         <h1>${esc(S.group.name)}</h1>
-      </div>
+      </button>
       <button class="hostbtn ${isHost() ? "on" : ""}" data-act="${isHost() ? "settings" : "host-open"}">${isHost() ? "Host" : "Host sign-in"}</button>
     </header>
-    <main>${body}</main>
+    <main class="${enter}">${body}</main>
   </div>
   <nav class="tabs" aria-label="Sections"><div>
-    ${[["tonight", "♠︎", "Tonight"], ["ledger", "♦︎", "The tab"], ["log", "♣︎", "Log"], ["hands", "♥︎", "Hands"]]
+    ${[["tonight", "\u2660\uFE0E", "Tonight"], ["ledger", "\u2666\uFE0E", "The tab"], ["log", "\u2663\uFE0E", "Log"], ["hands", "\u2665\uFE0E", "Hands"]]
       .map(([k, g, l]) => `<button data-act="tab" data-tab="${k}" ${!ui.player && ui.tab === k ? 'aria-current="page"' : ""}><span aria-hidden="true">${g}</span>${l}</button>`).join("")}
   </div></nav>`;
   renderSheet();
+}
+
+function homeView(enter) {
+  const s = liveSession(), host = isHost(), n = openSessions().length;
+  const bal = seasonBalances(), top = Object.entries(bal).sort((a, b) => b[1] - a[1])[0];
+  const me = ui.me && S.players.find(p => p.id === ui.me);
+  const t1 = s ? "Tonight's game" : host ? "Start a new game" : "Tonight's game";
+  const s1 = s ? `<span class="live-dot"></span>Live &middot; ${money(pot(s))} in play` : host ? "Set the buy-in and deal everyone in" : "No game on right now";
+  const s2 = me ? `${esc(me.name)}, you're ${signed(bal[me.id] || 0)}` : top && top[1] > 0 ? `${esc(pname(top[0]))} leads at ${signed(top[1])}` : "Balances and who owes what";
+  const door = (cls, tab, suit, title, sub) => `<button class="door ${cls}" data-act="door" data-tab="${tab}">
+      <span class="corner" aria-hidden="true">A<i>${suit}</i></span><span class="pip" aria-hidden="true">${suit}</span>
+      <span class="door-t">${title}</span><span class="door-s">${sub}</span><span class="corner br" aria-hidden="true">A<i>${suit}</i></span></button>`;
+  return `
+  <div class="home ${enter}">
+    <div class="suits" aria-hidden="true">\u2660\uFE0E\u2665\uFE0E\u2663\uFE0E\u2666\uFE0E</div>
+    <div class="eyebrow">${n} ${n === 1 ? "night" : "nights"} on the tab</div>
+    <h1>${esc(S.group.name)}</h1>
+    <div class="rule" aria-hidden="true">\u2666\uFE0E</div>
+    <div class="doors">
+      ${door("d1", "tonight", "\u2660\uFE0E", t1, s1)}
+      ${door("d2 red", "ledger", "\u2666\uFE0E", "View the tab", s2)}
+    </div>
+    <div class="home-links">
+      <button data-act="tab" data-tab="log"><span aria-hidden="true">\u2663\uFE0E</span>Session log</button>
+      <button data-act="tab" data-tab="hands"><span aria-hidden="true">\u2665\uFE0E</span>Hand rankings</button>
+    </div>
+    <button class="hostbtn ${host ? "on" : ""}" data-act="${host ? "settings" : "host-open"}">${host ? "Host settings" : "Host sign-in"}</button>
+  </div>`;
 }
 
 function gateView(err = "") {
@@ -473,7 +581,7 @@ function startView() {
   <section>
     <div class="sec-head"><h2>Who's in?</h2><span class="dim small" id="st-n">${d.picked.length} seated</span></div>
     <div class="picks">
-      ${S.players.map(p => `<button class="pick" data-act="pick" data-id="${p.id}" aria-pressed="${d.picked.includes(p.id)}">${esc(p.name)}</button>`).join("") || `<span class="dim small">No players yet. Add the first name below.</span>`}
+      ${S.players.filter(p => !p.archived).map(p => `<button class="pick" data-act="pick" data-id="${p.id}" aria-pressed="${d.picked.includes(p.id)}">${esc(p.name)}</button>`).join("") || `<span class="dim small">No players yet. Add the first name below.</span>`}
     </div>
     <form class="inline" data-form="roster" style="margin-top:14px">
       <label class="f">New player<input class="in" id="roster-name" maxlength="24" autocomplete="off" style="font-family:var(--body)"></label>
@@ -489,39 +597,52 @@ function rateLine(d) {
   return `1 chip = ${money(c / ch)} &middot; $1 = ${chipsFmt(ch / (c / 100))} chips`;
 }
 
+const initials = n => n.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join("").toUpperCase();
+const hasCount = (s, id) => s.counts[id] != null && s.counts[id] !== "";
+
 function liveView(s) {
-  const host = isHost(), ids = seats(s), p = pot(s);
-  const others = S.players.filter(pl => !ids.includes(pl.id));
+  const host = isHost(), ids = seats(s), p = pot(s), n = ids.length;
+  const others = S.players.filter(pl => !pl.archived && !ids.includes(pl.id));
   return `
-  <div class="pot">
-    <div class="eyebrow"><span class="live-dot"></span>Live &middot; ${esc(fmtDate(s.date))}</div>
-    <span class="amt num">${money(p)}</span>
-    <div class="small dim num">${chipsFmt(toChips(s, p))} chips in play &middot; ${money(s.cashPerBuyin)} buys ${chipsFmt(s.chipsPerBuyin)}</div>
+  <div>
+    <div class="live-banner"><span class="beacon"></span>Live now</div>
+    <div class="live-sub dim small">${esc(fmtDate(s.date, true))} &middot; ${n} at the table</div>
   </div>
-  <section>
-    <div class="sec-head"><h2>At the table</h2><span class="dim small">${ids.length} seated</span></div>
-    <div class="panel">
-      ${ids.map(id => {
-        const n = s.entries.filter(e => e.playerId === id).length, b = buyin(s, id);
-        return `<div class="seat">
-          <div class="seat-top">
-            <div class="who"><button class="linkname" data-act="player" data-id="${id}">${esc(pname(id))}</button>
-              <div class="small dim num">${n} buy-in${n === 1 ? "" : "s"} &middot; ${money(b)} &middot; ${chipsFmt(toChips(s, b))} chips</div></div>
-            ${host ? `<div class="seat-btns"><button class="btn sm" data-act="rebuy" data-id="${id}">+ ${money(s.cashPerBuyin).replace(".00", "")}</button><button class="btn sm ghost" data-act="seat-open" data-id="${id}" aria-label="Edit ${esc(pname(id))}'s buy-ins">Edit</button></div>` : ""}
-          </div>
-          ${host ? `<label class="count small dim" for="count-${id}">Final chip count<input class="in" id="count-${id}" data-count="${id}" inputmode="decimal" placeholder="chips" value="${esc(s.counts[id] ?? "")}"></label>`
-                 : (s.counts[id] != null && s.counts[id] !== "" ? `<div class="small dim num" style="margin-top:6px">Cashed out with ${chipsFmt(Number(s.counts[id]))} chips</div>` : "")}
-        </div>`;
-      }).join("")}
+  <div class="ptable ${n > 7 ? "big" : ""}">
+    <div class="felt">
+      <div class="eyebrow">In play</div>
+      <span class="amt">${money(p)}</span>
+      <div class="small">${chipsFmt(toChips(s, p))} chips</div>
+      <div class="small dim">${money(s.cashPerBuyin).replace(".00", "")} buys ${chipsFmt(s.chipsPerBuyin)}</div>
     </div>
-    ${host ? `<div id="tally">${tallyView(s)}</div>
-    <div style="margin-top:20px">
-      ${others.length ? `<div class="eyebrow" style="margin-bottom:10px">Seat a latecomer</div><div class="picks">${others.map(pl => `<button class="pick" data-act="seat-add" data-id="${pl.id}">+ ${esc(pl.name)}</button>`).join("")}</div>` : ""}
-      <form class="inline" data-form="latecomer" style="margin-top:12px">
-        <label class="f">Someone new<input class="in" id="late-name" maxlength="24" autocomplete="off" style="font-family:var(--body)"></label>
-        <button class="btn ghost">Seat</button>
-      </form>
-    </div>` : ""}
+    ${ids.map((id, i) => {
+      const a = (-90 + i * 360 / n) * Math.PI / 180, k = s.entries.filter(e => e.playerId === id).length, b = buyin(s, id);
+      return `<button class="seat-node" style="left:${(50 + 37 * Math.cos(a)).toFixed(2)}%;top:${(50 + 41 * Math.sin(a)).toFixed(2)}%;--i:${i}" data-act="${host ? "seat-open" : "player"}" data-id="${id}">
+        <span class="av ${hasCount(s, id) ? "done" : ""}" aria-hidden="true">${esc(initials(pname(id)))}</span>
+        <span class="nm">${esc(pname(id))}</span>
+        <span class="sd">${k} buy-in${k === 1 ? "" : "s"} &middot; ${money(b).replace(".00", "")}</span>
+        <span class="sd">${chipsFmt(toChips(s, b))} chips</span></button>`;
+    }).join("")}
+  </div>
+  ${host ? `<section>
+    <p class="dim small" style="text-align:center;margin:0 0 18px">Tap a player to add a rebuy or fix a buy-in.</p>
+    ${others.length ? `<div class="eyebrow" style="margin-bottom:10px">Seat a latecomer</div><div class="picks">${others.map(pl => `<button class="pick" data-act="seat-add" data-id="${pl.id}">+ ${esc(pl.name)}</button>`).join("")}</div>` : ""}
+    <form class="inline" data-form="latecomer" style="margin-top:12px">
+      <label class="f">Someone new<input class="in" id="late-name" maxlength="24" autocomplete="off" style="font-family:var(--body)"></label>
+      <button class="btn ghost">Seat</button>
+    </form>
+  </section>` : ""}
+  <section>
+    <div class="sec-head"><h2>Live cash-out</h2><span class="dim small">1 chip = ${money(chipValue(s))}</span></div>
+    <p class="dim small" style="margin:0 0 4px">${host ? "Type each stack as you count it. What it's worth shows straight away. Nothing is final until you close the night." : "Stacks appear here as the host counts them. Nothing is final until the night is closed."}</p>
+    <div id="tally">${tallyView(s)}</div>
+    <div class="panel" style="margin-top:14px">
+      ${ids.map(id => `<div class="co-row"><div><strong>${esc(pname(id))}</strong><div class="small dim">In for ${money(buyin(s, id))}</div></div>
+        ${host ? `<input class="in" id="count-${id}" data-count="${id}" inputmode="decimal" placeholder="chips" aria-label="${esc(pname(id))}'s chip count" value="${esc(s.counts[id] ?? "")}">`
+               : `<div class="small dim" style="text-align:right">${hasCount(s, id) ? chipsFmt(Number(s.counts[id])) + " chips" : "Not counted"}</div>`}
+        <div class="co-val" id="cv-${id}">${worthHtml(s, id, s.counts[id])}</div></div>`).join("")}
+    </div>
+    <div id="closeout">${closeoutView(s)}</div>
   </section>
   <section>
     <div class="sec-head"><h2>What's a stack worth?</h2></div>
@@ -531,10 +652,8 @@ function liveView(s) {
         <label class="f">Chips<input class="in" id="conv-chips" inputmode="decimal" placeholder="${chipsFmt(s.chipsPerBuyin)}"></label>
         <div class="big" id="conv-out" style="padding-bottom:10px;min-width:96px;text-align:right">${money(s.cashPerBuyin)}</div>
       </div>
-      <p class="rate">1 chip = ${money(chipValue(s))} tonight</p>
     </div>
   </section>
-  <section id="closeout">${closeoutView(s)}</section>
   <section>
     <div class="sec-head"><h2>Tonight's action</h2></div>
     ${host ? `<label class="f" for="sess-notes">Notes for the log<textarea class="in" id="sess-notes" data-notes-for="${s.id}">${esc(s.notes || "")}</textarea></label><div style="height:14px"></div>`
@@ -545,9 +664,15 @@ function liveView(s) {
     </ul>
   </section>`;
 }
+function worthHtml(s, id, raw) {
+  const n = parseFloat(raw);
+  if (raw == null || String(raw).trim() === "" || !(n >= 0)) return `<span class="dim">&ndash;</span>`;
+  const worth = Math.round(n * chipValue(s)), net = worth - buyin(s, id);
+  return `<strong>${money(worth)}</strong><span class="small ${tone(net)}">${signed(net)}</span>`;
+}
 
 const countedChips = s => seats(s).reduce((a, id) => a + (Number(s.counts[id]) || 0), 0);
-const blankCounts = s => seats(s).filter(id => s.counts[id] == null || s.counts[id] === "").length;
+const blankCounts = s => seats(s).filter(id => !hasCount(s, id)).length;
 const balanced = s => Math.abs(countedChips(s) - toChips(s, pot(s))) < 0.005;
 function tallyHtml(counted, issued, blanks) {
   const left = Math.round((issued - counted) * 100) / 100;
@@ -561,13 +686,16 @@ function tallyHtml(counted, issued, blanks) {
 const tallyView = s => tallyHtml(countedChips(s), toChips(s, pot(s)), blankCounts(s));
 
 function closeoutView(s) {
-  const host = isHost(), r = results(s), ok = r && balanced(s);
-  let h = `<div class="sec-head"><h2>Cash-out</h2></div>`;
-  if (ok) h += resultsTable(r.res);
-  else h += `<p class="dim small">${!host ? "Results appear once the host counts the chips."
-    : r ? "The count has to match the chips in play before the night can close. Check the tally above."
-    : "Enter everyone's final chip count above. Once it adds up to the chips in play, you'll see who's up and can close the night."}</p>`;
-  if (host) h += `<div class="actions"><button class="btn" data-act="close-session" ${ok ? "" : "disabled"}>Close the night</button><button class="btn danger" data-act="cancel-session" data-confirm>Scrap this session</button></div>`;
+  if (!isHost()) return "";
+  const r = results(s), ok = r && balanced(s), off = Math.round((countedChips(s) - toChips(s, pot(s))) * 100) / 100;
+  let h = "";
+  if (!r) h += `<p class="dim small" style="margin-top:14px">Enter a count for everyone, 0 for anyone who busted. Once it adds up to the chips in play you can close the night.</p>`;
+  else if (!ok) {
+    h += `<p class="warn">The count is ${chipsFmt(Math.abs(off))} ${off > 0 ? "over" : "short"}, so the night can't be closed yet. Recount, or override if the chips can't be found.</p>
+      <label class="ovr" for="ovr"><input type="checkbox" id="ovr" ${ui.override ? "checked" : ""}><span>Override and close anyway. Something odd happened and the chips won't add up.</span></label>`;
+    if (ui.override) h += `<p class="dim small" style="margin:10px 0">With the override, payouts are shared out by the chips actually counted, so the tab still balances to zero:</p>${resultsTable(r.res)}`;
+  }
+  h += `<div class="actions"><button class="btn" data-act="close-session" ${ok || (r && ui.override) ? "" : "disabled"}>Close the night</button><button class="btn danger" data-act="cancel-session" data-confirm>Scrap this session</button></div>`;
   return h;
 }
 function resultsTable(res) {
@@ -666,6 +794,7 @@ function logView() {
         <div class="small dim">${ids.length} players &middot; <span class="num">${money(pot(s))}</span> pot${top && top[1].net > 0 ? ` &middot; ${esc(pname(top[0]))} <span class="num up">${signed(top[1].net)}</span>` : ""}</div></div></summary>
       <div class="body">
         <p class="small dim num" style="margin:0 0 10px">${money(s.cashPerBuyin)} bought ${chipsFmt(s.chipsPerBuyin)} chips &middot; ${s.entries.length - ids.length} rebuy${s.entries.length - ids.length === 1 ? "" : "s"}</p>
+        ${s.countOff ? `<p class="warn">Closed on an override: ${chipsFmt(s.countOff.counted)} chips counted, ${chipsFmt(s.countOff.issued)} in play. Payouts were shared out by the chips counted.</p>` : ""}
         ${live ? `<p class="small">${ids.map(id => esc(pname(id))).join(", ")}</p><button class="btn sm ghost" data-act="tab" data-tab="tonight">Go to the table</button>` : resultsTable(s.results)}
         ${isHost() && !live ? `<label class="f" style="margin-top:14px">Notes<textarea class="in" data-notes-for="${s.id}">${esc(s.notes || "")}</textarea></label>` : s.notes ? `<p class="note">${esc(s.notes)}</p>` : ""}
         ${!live ? `<ul class="feed" style="margin-top:12px">${s.entries.map(e => `<li><time>${fmtTime(e.t)}</time><span>${esc(pname(e.playerId))} <span class="num">${money(e.amount)}</span></span></li>`).join("")}</ul>` : ""}
@@ -751,6 +880,8 @@ function renderSheet() {
     const s = liveSession(); if (!s) { ui.sheet = null; root.innerHTML = ""; return; }
     const es = s.entries.filter(e => e.playerId === sh.id);
     h = `<h2>${esc(pname(sh.id))}'s buy-ins</h2>
+      <div class="blk"><button class="btn wide" data-act="rebuy" data-id="${sh.id}">Rebuy for ${money(s.cashPerBuyin).replace(".00", "")}</button>
+        <p class="dim small" style="margin:10px 0 0;text-align:center">${chipsFmt(s.chipsPerBuyin)} more chips, added to the tab now.</p></div>
       <div class="blk"><form class="inline" data-form="custom-buy">
         <label class="f">Add a different amount $<input class="in" id="custom-amt" inputmode="decimal" placeholder="${(s.cashPerBuyin / 200).toFixed(2).replace(".00", "")}"></label>
         <button class="btn">Add</button></form>
@@ -768,12 +899,12 @@ function renderSheet() {
           <button class="btn ghost">Change PINs</button>
           <p class="dim small" style="margin:10px 0 0">Leave one blank to keep it. Friends use the table PIN to view. Share the host PIN only with co-hosts. Changing a PIN signs out everyone using the old one.</p></form></div>
       <div class="blk"><div class="eyebrow" style="margin-bottom:12px">Players</div>
-        ${S.players.map(p => `<div class="inline" style="margin-bottom:8px"><input class="in" style="margin:0;font-family:var(--body)" data-rename="${p.id}" maxlength="24" value="${esc(p.name)}" aria-label="Rename ${esc(p.name)}"></div>`).join("") || `<p class="dim small">Players appear here once added.</p>`}
-        ${S.players.length ? `<p class="dim small" style="margin:6px 0 0">Edit a name and tap away to rename it everywhere.</p>` : ""}</div>
+        ${S.players.filter(p => !p.archived).map(p => `<div class="inline" style="margin-bottom:8px;align-items:center"><input class="in" style="margin:0;font-family:var(--body)" data-rename="${p.id}" maxlength="24" value="${esc(p.name)}" aria-label="Rename ${esc(p.name)}"><button class="btn sm danger" data-act="del-player" data-id="${p.id}" data-confirm>Delete</button></div>`).join("") || `<p class="dim small">Players appear here once added.</p>`}
+        ${S.players.some(p => !p.archived) ? `<p class="dim small" style="margin:6px 0 0">Edit a name and tap away to rename it everywhere. Deleting someone who has played takes them off the player list, but past nights and any balance they still have stay on the books.</p>` : ""}</div>
       <div class="blk"><div class="actions" style="margin:0"><button class="btn ghost sm" data-act="backup">Copy a backup</button><button class="btn ghost sm" data-act="leave-host">Leave host mode</button><button class="btn ghost sm" data-act="signout">Sign out</button></div></div>
       <button class="btn wide" data-act="close-sheet">Done</button>`;
   }
-  root.innerHTML = `<div class="scrim" data-act="scrim"><div class="sheet" role="dialog" aria-modal="true">${h}</div></div>`;
+  root.innerHTML = `<div class="scrim ${root.firstChild ? "" : "opening"}" data-act="scrim"><div class="sheet" role="dialog" aria-modal="true">${h}</div></div>`;
   const first = $(".sheet input", root); if (first && sh.type !== "settings") first.focus();
 }
 
@@ -782,13 +913,14 @@ function addPlayer(d, name) {
   name = name.trim().replace(/\s+/g, " ");
   if (!name) return null;
   const hit = d.players.find(p => p.name.toLowerCase() === name.toLowerCase());
-  if (hit) return hit.id;
+  if (hit) { delete hit.archived; return hit.id; }
   const p = { id: uid(), name }; d.players.push(p); return p.id;
 }
 const addEntry = (s, pid, amount) => s.entries.push({ id: uid(), playerId: pid, amount, t: new Date().toISOString() });
 
 const actions = {
   tab(el) { ui.tab = el.dataset.tab; ui.player = null; try { history.replaceState(null, "", "#" + ui.tab); } catch {} render(); scrollTo(0, 0); },
+  door(el) { el.classList.add("go"); setTimeout(() => actions.tab(el), matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 200); },
   player(el) { ui.player = el.dataset.id; render(); scrollTo(0, 0); },
   back() { ui.player = null; render(); },
   me(el) { ui.me = ui.me === el.dataset.id ? null : el.dataset.id; ls.set("me", ui.me); render(); },
@@ -810,14 +942,21 @@ const actions = {
     if (ok) ui.draft = null;
   },
   rebuy(el) { mutate(st => { const s = st.sessions.find(x => x.status === "live"); if (!s) return false; addEntry(s, el.dataset.id, s.cashPerBuyin); }).then(ok => ok && toast(pname(el.dataset.id) + " rebought")); },
+  "del-player"(el) {
+    const id = el.dataset.id, live = liveSession();
+    if (live && seats(live).includes(id)) return toast("They're seated tonight. Remove their buy-ins first.");
+    const played = S.sessions.some(s => s.entries.some(e => e.playerId === id));
+    mutate(st => { if (played) { const p = st.players.find(x => x.id === id); if (!p) return false; p.archived = true; } else st.players = st.players.filter(x => x.id !== id); })
+      .then(ok => { if (!ok) return; if (ui.draft) ui.draft.picked = ui.draft.picked.filter(x => x !== id); toast(played ? "Removed. Their past nights stay on the books." : "Player deleted"); });
+  },
   "seat-add"(el) { mutate(st => { const s = st.sessions.find(x => x.status === "live"); if (!s) return false; addEntry(s, el.dataset.id, s.cashPerBuyin); }); },
   "seat-open"(el) { ui.sheet = { type: "seat", id: el.dataset.id }; renderSheet(); },
   "del-entry"(el) { mutate(st => { const s = st.sessions.find(x => x.status === "live"); if (!s) return false; s.entries = s.entries.filter(e => e.id !== el.dataset.id); seats(s).length; Object.keys(s.counts).forEach(id => { if (!s.entries.some(e => e.playerId === id)) delete s.counts[id]; }); }); },
   "close-session"() {
-    mutate(st => { const s = st.sessions.find(x => x.status === "live"); const r = s && results(s); if (!r || !balanced(s)) return false; s.results = r.res; s.status = "closed"; s.closedAt = new Date().toISOString(); })
-      .then(ok => { if (ok) { ui.tab = "ledger"; render(); scrollTo(0, 0); toast("Night closed. The tab is updated."); } });
+    mutate(st => { const s = st.sessions.find(x => x.status === "live"); const r = s && results(s); if (!r || !(balanced(s) || ui.override)) return false; if (balanced(s)) delete s.countOff; else s.countOff = { counted: r.counted, issued: r.issued }; s.results = r.res; s.status = "closed"; s.closedAt = new Date().toISOString(); })
+      .then(ok => { if (ok) { ui.override = false; ui.tab = "ledger"; render(); scrollTo(0, 0); toast("Night closed. The tab is updated."); } });
   },
-  "cancel-session"() { mutate(st => { st.sessions = st.sessions.filter(s => s.status !== "live"); }); },
+  "cancel-session"() { ui.override = false; mutate(st => { st.sessions = st.sessions.filter(s => s.status !== "live"); }); },
   reopen(el) { mutate(st => { if (st.sessions.some(s => s.status === "live")) return false; const s = st.sessions.find(x => x.id === el.dataset.id); if (!s || s.settlementId) return false; s.status = "live"; s.results = {}; }).then(ok => { if (ok) actions.tab({ dataset: { tab: "tonight" } }); }); },
   "del-session"(el) { mutate(st => { st.sessions = st.sessions.filter(s => s.id !== el.dataset.id || s.settlementId); }); },
   "tx-next"() { ui.txOpt++; render(); },
@@ -837,7 +976,7 @@ const actions = {
     try { await navigator.clipboard.writeText(text); toast("Backup copied. Paste it somewhere safe."); } catch { toast("Couldn't copy on this device."); }
   },
   "leave-host"() { hostPin = null; ls.set("hostPin", null); role = "viewer"; ui.sheet = null; if (!pin) return actions.signout(); render(); },
-  signout() { pin = hostPin = null; ls.set("pin", null); ls.set("hostPin", null); S = null; role = null; ui.sheet = null; render(); renderSheet(); }
+  signout() { ui.tab = "home"; ui.player = null; ui.lastKey = null; pin = hostPin = null; ls.set("pin", null); ls.set("hostPin", null); S = null; role = null; ui.sheet = null; render(); renderSheet(); }
 };
 
 const forms = {
@@ -901,7 +1040,7 @@ document.addEventListener("input", e => {
   if (t.dataset.draft && ui.draft) { ui.draft[t.dataset.draft] = t.value; const r = $("#st-rate"); if (r) r.innerHTML = rateLine(ui.draft); }
   else if (t.dataset.count) {
     const s = liveSession(), ins = [...document.querySelectorAll("[data-count]")];
-    if (s) $("#tally").innerHTML = tallyHtml(ins.reduce((a, i) => a + (parseFloat(i.value) || 0), 0), toChips(s, pot(s)), ins.filter(i => !i.value.trim()).length);
+    if (s) { $("#tally").innerHTML = tallyHtml(ins.reduce((a, i) => a + (parseFloat(i.value) || 0), 0), toChips(s, pot(s)), ins.filter(i => !i.value.trim()).length); $("#cv-" + t.dataset.count).innerHTML = worthHtml(s, t.dataset.count, t.value); }
   }
   else if (t.id === "conv-chips") { const s = liveSession(), n = parseFloat(t.value); $("#conv-out").textContent = money((isFinite(n) ? n : s.chipsPerBuyin) * chipValue(s)); }
   else if (t.id === "custom-amt") { const s = liveSession(), c = toCents(t.value); $("#custom-rate").textContent = c > 0 ? `${money(c)} buys ${chipsFmt(toChips(s, c))} chips` : "For a half stack or a top-up."; }
@@ -909,11 +1048,12 @@ document.addEventListener("input", e => {
 // Saved without a full redraw so the next field keeps focus while counting chips.
 document.addEventListener("change", e => {
   const t = e.target;
+  if (t.id === "ovr") { ui.override = t.checked; const s = liveSession(); if (s) $("#closeout").innerHTML = closeoutView(s); return; }
   if (t.dataset.count) {
     const id = t.dataset.count, raw = t.value.trim(), n = parseFloat(raw);
     if (raw && !(n >= 0)) { toast("Enter a chip count."); return; }
     mutate(st => { const s = st.sessions.find(x => x.status === "live"); if (!s) return false; if (raw) s.counts[id] = n; else delete s.counts[id]; }, { quiet: true })
-      .then(() => { const s = liveSession(), c = $("#closeout"), ty = $("#tally"); if (s && c) c.innerHTML = closeoutView(s); if (s && ty) ty.innerHTML = tallyView(s); });
+      .then(() => { const s = liveSession(), c = $("#closeout"), ty = $("#tally"); if (s && c) c.innerHTML = closeoutView(s); if (s && ty) ty.innerHTML = tallyView(s); if (s) seats(s).forEach(pid => { const cv = $("#cv-" + pid); if (cv) cv.innerHTML = worthHtml(s, pid, s.counts[pid]); }); if (s) document.querySelectorAll(".seat-node").forEach(b => b.querySelector(".av").classList.toggle("done", hasCount(s, b.dataset.id))); });
   } else if (t.dataset.notesFor) {
     mutate(st => { const s = st.sessions.find(x => x.id === t.dataset.notesFor); if (!s) return false; s.notes = t.value.trim(); }, { quiet: true }).then(ok => ok && toast("Notes saved"));
   } else if (t.dataset.rename) {

@@ -1,0 +1,35 @@
+# Keeps the poker tab's database awake. Supabase pauses free projects after a week
+# with no activity; this asks it one harmless question twice a week.
+name: Keep the books open
+
+on:
+  schedule:
+    - cron: "17 9 * * 1,4" # Mondays and Thursdays
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ask the database a question
+        run: |
+          url=$(grep -o 'supabaseUrl: *"[^"]*"' config.js | cut -d'"' -f2)
+          key=$(grep -o 'supabaseKey: *"[^"]*"' config.js | cut -d'"' -f2)
+          # A deliberately wrong PIN: the database has to look, but reveals nothing.
+          curl --fail --silent --show-error --max-time 30 -X POST "${url%/}/rest/v1/rpc/poker_get" \
+            -H "Content-Type: application/json" -H "apikey: $key" -H "Authorization: Bearer $key" \
+            -d '{"p_pin":"keep-alive"}'
+
+      # GitHub switches off scheduled jobs in repos with no commits for 60 days.
+      # Re-enabling the workflow on each run resets that clock.
+      - name: Keep this schedule switched on
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/keep-alive.yml/enable"
