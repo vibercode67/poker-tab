@@ -1,0 +1,865 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a2c21">
+<meta name="robots" content="noindex">
+<title>The Tab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap">
+<style>
+/* Layout: one phone-width column on green baize, gold-ruled sections, a four-suit tab bar pinned to the bottom. */
+:root {
+  color-scheme: dark;
+  --felt: #0f3d2e;
+  --felt-lit: #16543f;
+  --felt-deep: #0a2c21;
+  --felt-dark: #061a13;
+  --ivory: #f4ecd6;
+  --ivory-dim: #a9bba9;
+  --gold: #d9bd6a;
+  --gold-deep: #a8873a;
+  --line: rgba(217, 189, 106, .28);
+  --up: #8fd6a3;
+  --down: #f0958a;
+  --card: #fbf6e6;
+  --ink: #17231d;
+  --suit-red: #b3261e;
+  --display: "Playfair Display", "Iowan Old Style", Georgia, serif;
+  --body: "Instrument Sans", "Avenir Next", "Segoe UI", sans-serif;
+  --mono: "DM Mono", ui-monospace, Menlo, monospace;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { background: var(--felt-dark); }
+body {
+  margin: 0; min-height: 100vh; min-height: 100dvh;
+  font: 400 16px/1.45 var(--body); color: var(--ivory);
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"),
+    radial-gradient(120% 70% at 50% 0%, var(--felt-lit), var(--felt) 45%, var(--felt-deep) 100%) fixed;
+  -webkit-tap-highlight-color: transparent;
+}
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+.wrap { max-width: 600px; margin: 0 auto; padding: calc(env(safe-area-inset-top, 0px) + 18px) 18px calc(env(safe-area-inset-bottom, 0px) + 104px); }
+
+/* type */
+.eyebrow { font: 500 11px/1.2 var(--mono); letter-spacing: .2em; text-transform: uppercase; color: var(--gold); }
+h1, h2, h3 { font-family: var(--display); font-weight: 700; margin: 0; text-wrap: balance; }
+h1 { font-size: 30px; line-height: 1.1; }
+h2 { font-size: 22px; line-height: 1.2; }
+h3 { font-size: 17px; }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.up { color: var(--up); } .down { color: var(--down); } .even { color: var(--ivory-dim); }
+.dim { color: var(--ivory-dim); }
+.small { font-size: 13px; }
+
+/* header */
+.top { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding-bottom: 16px; border-bottom: 1px solid var(--line); margin-bottom: 22px; }
+.top h1 { margin-top: 6px; }
+.hostbtn { flex: none; background: none; border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px; font: 500 12px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
+.hostbtn.on { background: var(--gold); color: var(--felt-deep); border-color: var(--gold); }
+
+/* sections */
+section { margin-bottom: 30px; }
+.sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.panel { background: rgba(6, 26, 19, .55); border-radius: 14px; padding: 4px 16px; }
+.panel.pad { padding: 16px; }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 0; border-top: 1px solid rgba(244, 236, 214, .08); min-width: 0; }
+.row:first-child { border-top: 0; }
+.row .who { min-width: 0; flex: 1; }
+.linkname { background: none; border: 0; padding: 0; font: 500 17px var(--body); color: var(--ivory); text-align: left; }
+.linkname:hover { color: var(--gold); }
+.rank { font: 500 12px var(--mono); color: var(--gold-deep); width: 22px; flex: none; }
+.big { font: 500 19px var(--mono); }
+.empty { text-align: center; padding: 34px 18px; }
+.empty h2 { margin-bottom: 8px; }
+.empty p { margin: 0 auto 18px; max-width: 34ch; color: var(--ivory-dim); }
+
+/* stats */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border-block: 1px solid var(--line); margin-bottom: 22px; }
+.stats > div { background: var(--felt-deep); padding: 12px 8px; text-align: center; }
+.stats .v { font: 500 18px var(--mono); display: block; margin-top: 4px; }
+.stats .k { font: 500 10px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ivory-dim); }
+
+/* buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 10px 22px; border-radius: 999px; border: 1px solid var(--gold); background: var(--gold); color: var(--felt-deep); font-weight: 600; }
+.btn:active { transform: translateY(1px); }
+.btn.wide { width: 100%; }
+.btn.ghost { background: none; color: var(--gold); border-color: var(--line); font-weight: 500; }
+.btn.sm { min-height: 38px; padding: 6px 14px; font-size: 14px; }
+.btn.danger { background: none; color: var(--down); border-color: rgba(240, 149, 138, .4); font-weight: 500; }
+.btn.armed { background: var(--down); color: var(--felt-dark); border-color: var(--down); }
+.btn[disabled] { opacity: .45; cursor: default; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+
+/* forms */
+label.f { display: block; font: 500 11px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ivory-dim); }
+.in { display: block; width: 100%; margin-top: 6px; min-height: 46px; padding: 10px 12px; background: var(--felt-dark); border: 1px solid var(--line); border-radius: 10px; font: 500 17px var(--mono); color: var(--ivory); letter-spacing: 0; text-transform: none; }
+textarea.in { font: 400 15px/1.45 var(--body); min-height: 76px; resize: vertical; }
+.in::placeholder { color: rgba(169, 187, 169, .55); }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid3 { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 10px; }
+.inline { display: flex; gap: 8px; align-items: flex-end; }
+.inline > :first-child { flex: 1; min-width: 0; }
+.picks { display: flex; flex-wrap: wrap; gap: 8px; }
+.pick { border: 1px solid var(--line); background: none; border-radius: 999px; padding: 8px 15px; min-height: 40px; }
+.pick[aria-pressed="true"] { background: var(--ivory); color: var(--felt-deep); border-color: var(--ivory); font-weight: 600; }
+.rate { margin: 12px 0 0; font: 400 13px var(--mono); color: var(--gold); }
+
+/* live table */
+.pot { text-align: center; padding: 20px 12px 18px; border: 1px solid var(--line); border-radius: 120px / 70px; background: radial-gradient(closest-side, rgba(22, 84, 63, .9), rgba(6, 26, 19, .5)); margin-bottom: 22px; }
+.pot .amt { font: 700 40px/1 var(--display); display: block; margin: 8px 0 6px; }
+.live-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--up); margin-right: 7px; vertical-align: 1px; animation: pulse 2s infinite; }
+@keyframes pulse { 50% { opacity: .3; } }
+@media (prefers-reduced-motion: reduce) { .live-dot { animation: none; } }
+.seat { padding: 14px 0; border-top: 1px solid rgba(244, 236, 214, .08); }
+.seat:first-child { border-top: 0; }
+.seat-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.seat-btns { display: flex; gap: 6px; flex: none; }
+.count { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 10px; }
+.count .in { width: 120px; margin: 0; min-height: 40px; text-align: right; }
+.feed { list-style: none; margin: 0; padding: 0; }
+.feed li { display: flex; gap: 12px; padding: 8px 0; font-size: 14px; border-top: 1px dashed rgba(244, 236, 214, .1); }
+.feed li:first-child { border-top: 0; }
+.feed time { font: 400 12px var(--mono); color: var(--ivory-dim); width: 68px; flex: none; padding-top: 2px; }
+.warn { border-left: 2px solid var(--gold); padding: 6px 0 6px 12px; margin: 12px 0; font-size: 14px; color: var(--gold); }
+.note { font-family: var(--display); font-style: italic; color: var(--ivory); margin: 10px 0 0; }
+
+/* tables */
+.tbl-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { font: 500 10px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ivory-dim); text-align: right; padding: 6px 0 6px 10px; }
+td { padding: 8px 0 8px 10px; text-align: right; border-top: 1px solid rgba(244, 236, 214, .08); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; padding-left: 0; }
+td.num { font-size: 13px; }
+
+/* log */
+details.sess { border-top: 1px solid rgba(244, 236, 214, .08); }
+details.sess:first-child { border-top: 0; }
+details.sess summary { list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 0; cursor: pointer; }
+details.sess summary::-webkit-details-marker { display: none; }
+details.sess summary::after { content: "+"; font: 400 20px var(--mono); color: var(--gold); flex: none; }
+details.sess[open] summary::after { content: "−"; }
+details.sess .body { padding-bottom: 16px; }
+.tag { font: 500 10px var(--mono); letter-spacing: .12em; text-transform: uppercase; border: 1px solid var(--line); color: var(--gold); border-radius: 999px; padding: 2px 8px; margin-left: 8px; vertical-align: 2px; }
+
+/* settle */
+.xfer { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-top: 1px solid rgba(244, 236, 214, .08); }
+.xfer:first-child { border-top: 0; }
+.xfer .t { flex: 1; min-width: 0; }
+.xfer .arrow { color: var(--gold); padding: 0 4px; }
+.paid { border: 1px solid var(--line); background: none; border-radius: 999px; padding: 4px 11px; font: 500 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ivory-dim); }
+.paid.on { background: var(--up); border-color: var(--up); color: var(--felt-dark); }
+span.paid { cursor: default; }
+
+/* hands */
+.hand { display: grid; grid-template-columns: 26px 1fr; gap: 4px 10px; padding: 16px 0; border-top: 1px solid rgba(244, 236, 214, .08); }
+.hand:first-child { border-top: 0; }
+.hand .n { font: 700 20px var(--display); color: var(--gold); line-height: 1.2; }
+.hand p { margin: 2px 0 10px; font-size: 14px; color: var(--ivory-dim); }
+.cards { display: flex; gap: 6px; }
+.pc { width: 46px; aspect-ratio: 5 / 7; max-width: 17%; background: var(--card); color: var(--ink); border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; box-shadow: 0 2px 0 rgba(0, 0, 0, .35); }
+.pc b { font: 700 18px var(--display); }
+.pc i { font-style: normal; font-size: 17px; margin-top: 2px; }
+.pc.red { color: var(--suit-red); }
+.pc.off { opacity: .38; box-shadow: none; }
+.ladder { display: flex; justify-content: space-between; margin-bottom: 4px; }
+
+/* player */
+.back { background: none; border: 0; padding: 0; margin-bottom: 16px; color: var(--gold); font: 500 12px var(--mono); letter-spacing: .14em; text-transform: uppercase; }
+.spark { width: 100%; height: 90px; display: block; margin: 4px 0 18px; }
+.mine { border: 1px solid var(--gold); border-radius: 14px; padding: 16px; margin-bottom: 26px; display: flex; justify-content: space-between; align-items: center; gap: 12px; background: rgba(6, 26, 19, .55); }
+.mine .amt { font: 700 30px var(--display); }
+
+/* nav */
+nav.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; background: var(--felt-dark); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
+nav.tabs div { max-width: 600px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); }
+nav.tabs button { background: none; border: 0; border-top: 2px solid transparent; margin-top: -1px; padding: 9px 0 10px; color: var(--ivory-dim); font: 500 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+nav.tabs button span { font-size: 19px; line-height: 1; font-family: Georgia, serif; }
+nav.tabs button[aria-current="page"] { color: var(--gold); border-top-color: var(--gold); }
+
+/* sheet */
+.scrim { position: fixed; inset: 0; z-index: 10; background: rgba(3, 12, 9, .72); display: flex; align-items: flex-end; justify-content: center; }
+.sheet { width: 100%; max-width: 600px; max-height: 90dvh; overflow-y: auto; background: var(--felt-deep); border: 1px solid var(--line); border-bottom: 0; border-radius: 20px 20px 0 0; padding: 22px 18px calc(env(safe-area-inset-bottom, 0px) + 24px); }
+.sheet h2 { margin-bottom: 16px; }
+.sheet .blk { margin-bottom: 22px; padding-bottom: 22px; border-bottom: 1px solid rgba(244, 236, 214, .08); }
+.sheet .blk:last-child { border: 0; margin: 0; padding: 0; }
+
+/* gate */
+.gate { min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; }
+.gate .suits { font: 400 22px Georgia, serif; letter-spacing: .5em; color: var(--gold); margin-bottom: 18px; padding-left: .5em; }
+.gate h1 { font-size: 40px; margin-bottom: 10px; }
+.gate p { color: var(--ivory-dim); margin: 0 0 26px; }
+.gate form { width: 100%; max-width: 280px; }
+.pin { text-align: center; text-transform: uppercase; letter-spacing: .5em; padding-left: calc(12px + .5em); font-size: 26px; min-height: 60px; }
+.err { color: var(--down); font-size: 14px; min-height: 21px; margin: 10px 0; }
+.demo { margin-top: 26px; font: 400 12px/1.6 var(--mono); color: var(--ivory-dim); max-width: 34ch; }
+
+.toast { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 84px); transform: translateX(-50%); z-index: 20; background: var(--ivory); color: var(--felt-deep); padding: 9px 18px; border-radius: 999px; font-size: 14px; font-weight: 500; max-width: calc(100% - 36px); text-align: center; }
+@media (max-width: 380px) { .grid3 { grid-template-columns: 1fr 1fr; } .grid3 > :first-child { grid-column: 1 / -1; } .pot .amt { font-size: 34px; } }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="sheet-root"></div>
+<div id="toast" class="toast" role="status" hidden></div>
+
+<script src="config.js"></script>
+<script>
+(() => {
+"use strict";
+
+/* ---------- helpers ---------- */
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const uid = () => Math.random().toString(36).slice(2, 10);
+const money = c => "$" + (Math.abs(c) / 100).toFixed(2);
+const signed = c => (c > 0 ? "+" : c < 0 ? "−" : "") + money(c);
+const tone = c => (c > 0 ? "up" : c < 0 ? "down" : "even");
+const chipsFmt = n => (Math.round(n * 100) / 100).toLocaleString();
+const pad = n => String(n).padStart(2, "0");
+const today = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
+const fmtDate = (s, long) => { const [y, m, d] = s.slice(0, 10).split("-").map(Number); return new Date(y, m - 1, d).toLocaleDateString(undefined, long ? { weekday: "long", month: "long", day: "numeric", year: "numeric" } : { weekday: "short", month: "short", day: "numeric" }); };
+const fmtTime = t => new Date(t).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+const toCents = v => { const n = parseFloat(String(v).replace(/[^0-9.]/g, "")); return isFinite(n) ? Math.round(n * 100) : NaN; };
+const ls = {
+  get(k) { try { return localStorage.getItem("pokertab." + k); } catch { return null; } },
+  set(k, v) { try { v == null ? localStorage.removeItem("pokertab." + k) : localStorage.setItem("pokertab." + k, v); } catch {} }
+};
+let toastTimer;
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => (t.hidden = true), 2600); }
+
+/* ---------- storage: Supabase when configured, this device otherwise ---------- */
+const CFG = window.POKER_CONFIG || {};
+const REMOTE = !!(CFG.supabaseUrl && CFG.supabaseKey);
+
+async function rpc(name, body) {
+  const r = await fetch(CFG.supabaseUrl.replace(/\/+$/, "") + "/rest/v1/rpc/" + name, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", apikey: CFG.supabaseKey, Authorization: "Bearer " + CFG.supabaseKey },
+    body: JSON.stringify(body)
+  });
+  if (!r.ok) throw new Error("network");
+  return r.json();
+}
+const remoteStore = {
+  load: pin => rpc("poker_get", { p_pin: pin }),
+  save: (pin, state, version) => rpc("poker_save", { p_pin: pin, p_state: state, p_version: version }),
+  setPins: (pin, view, host) => rpc("poker_set_pins", { p_pin: pin, p_view: view, p_host: host })
+};
+const localStore = (() => {
+  const read = () => { try { return JSON.parse(ls.get("book")) || null; } catch { return null; } };
+  const book = () => read() || { state: {}, version: 0, view: "DEAL", host: "BANKER" };
+  const role = (b, pin) => { const p = String(pin || "").toUpperCase(); return p === b.host ? "host" : p === b.view ? "viewer" : null; };
+  return {
+    async load(pin) { const b = book(), r = role(b, pin); return r ? { ok: true, role: r, version: b.version, state: b.state } : { ok: false, reason: "bad_pin" }; },
+    async save(pin, state, version) {
+      const b = book();
+      if (role(b, pin) !== "host") return { ok: false, reason: "bad_pin" };
+      if (b.version !== version) return { ok: false, reason: "conflict" };
+      b.state = state; b.version++; ls.set("book", JSON.stringify(b));
+      return { ok: true, version: b.version };
+    },
+    async setPins(pin, view, host) {
+      const b = book();
+      if (role(b, pin) !== "host") return { ok: false, reason: "bad_pin" };
+      const v = view ? view.toUpperCase() : b.view, h = host ? host.toUpperCase() : b.host;
+      if (view && view.length !== 4) return { ok: false, reason: "view_length" };
+      if (host && host.length < 4) return { ok: false, reason: "host_length" };
+      if (v === h) return { ok: false, reason: "same" };
+      b.view = v; b.host = h; ls.set("book", JSON.stringify(b));
+      return { ok: true };
+    }
+  };
+})();
+const store = REMOTE ? remoteStore : localStore;
+
+/* ---------- state ---------- */
+let S = null, version = 0, role = null;
+let pin = ls.get("pin"), hostPin = ls.get("hostPin");
+const ui = { tab: "tonight", player: null, sheet: null, draft: null, me: ls.get("me") };
+
+function normalize(s) {
+  s = s && typeof s === "object" ? s : {};
+  s.group = s.group || { name: "The Home Game" };
+  s.players = s.players || [];
+  s.sessions = s.sessions || [];
+  s.settlements = s.settlements || [];
+  return s;
+}
+const isHost = () => role === "host";
+const pname = id => (S.players.find(p => p.id === id) || {}).name || "Unknown";
+const liveSession = () => S.sessions.find(s => s.status === "live");
+
+/* ---------- money maths (all cash in cents) ---------- */
+const seats = s => { const out = []; s.entries.forEach(e => { if (!out.includes(e.playerId)) out.push(e.playerId); }); return out; };
+const buyin = (s, pid) => s.entries.filter(e => e.playerId === pid).reduce((a, e) => a + e.amount, 0);
+const pot = s => s.entries.reduce((a, e) => a + e.amount, 0);
+const toChips = (s, cents) => cents * s.chipsPerBuyin / s.cashPerBuyin;
+const chipValue = s => s.cashPerBuyin / s.chipsPerBuyin; // cents per chip
+
+// Each player's share of the pot follows their share of the chips counted, so the
+// night always nets to zero even when the count is a few chips off.
+function results(s) {
+  const ids = seats(s), p = pot(s);
+  if (!ids.length || ids.some(id => s.counts[id] == null || s.counts[id] === "")) return null;
+  const counts = ids.map(id => Number(s.counts[id]));
+  if (counts.some(c => !isFinite(c) || c < 0)) return null;
+  const total = counts.reduce((a, b) => a + b, 0);
+  if (total <= 0) return null;
+  const pay = counts.map(c => Math.round(c / total * p));
+  pay[counts.indexOf(Math.max(...counts))] += p - pay.reduce((a, b) => a + b, 0);
+  const res = {};
+  ids.forEach((id, i) => { const b = buyin(s, id); res[id] = { buyin: b, chips: counts[i], payout: pay[i], net: pay[i] - b }; });
+  return { res, counted: total, issued: toChips(s, p) };
+}
+function balances(filter) {
+  const b = {};
+  S.sessions.filter(s => s.status === "closed" && filter(s)).forEach(s => Object.entries(s.results).forEach(([id, r]) => (b[id] = (b[id] || 0) + r.net)));
+  return b;
+}
+const seasonBalances = () => balances(s => !s.settlementId);
+const openSessions = () => S.sessions.filter(s => s.status === "closed" && !s.settlementId);
+function transfers(bal) {
+  const d = [], c = [];
+  Object.entries(bal).forEach(([id, v]) => { if (v < 0) d.push({ id, v: -v }); else if (v > 0) c.push({ id, v }); });
+  d.sort((a, b) => b.v - a.v); c.sort((a, b) => b.v - a.v);
+  const out = []; let i = 0, j = 0;
+  while (i < d.length && j < c.length) {
+    const a = Math.min(d[i].v, c[j].v);
+    out.push({ from: d[i].id, to: c[j].id, amount: a, paid: false });
+    d[i].v -= a; c[j].v -= a;
+    if (!d[i].v) i++; if (!c[j].v) j++;
+  }
+  return out;
+}
+
+/* ---------- loading and saving ---------- */
+async function load() {
+  let res = null;
+  if (hostPin) { res = await store.load(hostPin); if (!res.ok || res.role !== "host") { hostPin = null; ls.set("hostPin", null); res = null; } }
+  if (!res && pin) res = await store.load(pin);
+  if (!res || !res.ok) return false;
+  S = normalize(res.state); version = res.version; role = res.role;
+  return true;
+}
+let saving = false;
+async function mutate(fn, opts = {}) {
+  if (!isHost() || saving) return false;
+  saving = true;
+  try {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const draft = structuredClone(S);
+      if (fn(draft) === false) return false;
+      const res = await store.save(hostPin, draft, version);
+      if (res.ok) { S = draft; version = res.version; if (!opts.quiet) render(); return true; }
+      if (res.reason === "conflict") { await load(); continue; }
+      if (res.reason === "bad_pin") { hostPin = null; ls.set("hostPin", null); role = "viewer"; render(); toast("Host PIN has changed. Sign in as host again."); return false; }
+      break;
+    }
+    toast("Couldn't save. Try again.");
+  } catch { toast("No connection. Nothing was saved."); }
+  finally { saving = false; }
+  return false;
+}
+async function poll() {
+  if (!S || document.hidden || ui.sheet || saving) return;
+  const a = document.activeElement;
+  if (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return;
+  const before = version;
+  try { if (await load() && version !== before) render(); } catch {}
+}
+
+/* ---------- views ---------- */
+function render() {
+  const app = $("#app");
+  if (!S) { app.innerHTML = gateView(); return; }
+  document.title = S.group.name;
+  const season = S.settlements.length + 1, n = openSessions().length;
+  const body = ui.player ? playerView(ui.player) : { tonight: tonightView, ledger: ledgerView, log: logView, hands: handsView }[ui.tab]();
+  app.innerHTML = `
+  <div class="wrap">
+    <header class="top">
+      <div>
+        <div class="eyebrow">Season ${season} &middot; ${n} ${n === 1 ? "night" : "nights"} on the tab</div>
+        <h1>${esc(S.group.name)}</h1>
+      </div>
+      <button class="hostbtn ${isHost() ? "on" : ""}" data-act="${isHost() ? "settings" : "host-open"}">${isHost() ? "Host" : "Host sign-in"}</button>
+    </header>
+    <main>${body}</main>
+  </div>
+  <nav class="tabs" aria-label="Sections"><div>
+    ${[["tonight", "♠︎", "Tonight"], ["ledger", "♦︎", "The tab"], ["log", "♣︎", "Log"], ["hands", "♥︎", "Hands"]]
+      .map(([k, g, l]) => `<button data-act="tab" data-tab="${k}" ${!ui.player && ui.tab === k ? 'aria-current="page"' : ""}><span aria-hidden="true">${g}</span>${l}</button>`).join("")}
+  </div></nav>`;
+  renderSheet();
+}
+
+function gateView(err = "") {
+  return `
+  <div class="gate">
+    <div class="suits" aria-hidden="true">&spades;&#xFE0E;&hearts;&#xFE0E;&clubs;&#xFE0E;&diams;&#xFE0E;</div>
+    <h1>The Tab</h1>
+    <p>Enter the table PIN to see the books.</p>
+    <form data-form="gate" autocomplete="off">
+      <label class="f" for="gate-pin">Table PIN</label>
+      <input class="in pin" id="gate-pin" maxlength="12" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-describedby="gate-err">
+      <div class="err" id="gate-err" role="alert">${esc(err)}</div>
+      <button class="btn wide">Take a seat</button>
+    </form>
+    ${REMOTE ? "" : `<p class="demo">Demo mode. Data stays on this device until the database is connected. Table PIN DEAL, host PIN BANKER.</p>`}
+  </div>`;
+}
+
+/* --- Tonight --- */
+function tonightView() {
+  const s = liveSession();
+  if (s) return liveView(s);
+  if (isHost()) return startView();
+  const last = S.sessions.filter(x => x.status === "closed").sort((a, b) => b.date.localeCompare(a.date))[0];
+  return `<section class="empty"><div class="eyebrow">Table's dark</div><h2>No game on right now</h2>
+    <p>${last ? `Last dealt ${esc(fmtDate(last.date, true))}.` : "The first night hasn't been logged yet."} When the host opens a session, buy-ins show up here as they happen.</p>
+    <button class="btn ghost" data-act="tab" data-tab="ledger">See the tab</button></section>`;
+}
+
+function startView() {
+  const d = ui.draft || (ui.draft = { date: today(), cash: "20", chips: "50", picked: [] });
+  return `
+  <section>
+    <div class="sec-head"><h2>Open tonight's game</h2></div>
+    <div class="panel pad">
+      <div class="grid3">
+        <label class="f">Date<input class="in" type="date" id="st-date" data-draft="date" value="${esc(d.date)}"></label>
+        <label class="f">Buy-in $<input class="in" id="st-cash" inputmode="decimal" data-draft="cash" value="${esc(d.cash)}"></label>
+        <label class="f">In chips<input class="in" id="st-chips" inputmode="decimal" data-draft="chips" value="${esc(d.chips)}"></label>
+      </div>
+      <p class="rate" id="st-rate">${rateLine(d)}</p>
+    </div>
+  </section>
+  <section>
+    <div class="sec-head"><h2>Who's in?</h2><span class="dim small" id="st-n">${d.picked.length} seated</span></div>
+    <div class="picks">
+      ${S.players.map(p => `<button class="pick" data-act="pick" data-id="${p.id}" aria-pressed="${d.picked.includes(p.id)}">${esc(p.name)}</button>`).join("") || `<span class="dim small">No players yet. Add the first name below.</span>`}
+    </div>
+    <form class="inline" data-form="roster" style="margin-top:14px">
+      <label class="f">New player<input class="in" id="roster-name" placeholder="Nathan" maxlength="24" autocomplete="off" style="font-family:var(--body)"></label>
+      <button class="btn ghost">Add</button>
+    </form>
+    <div class="actions"><button class="btn wide" data-act="start">Deal them in</button></div>
+    <p class="dim small" style="margin-top:10px">Everyone seated starts with one buy-in. Latecomers and rebuys can be added any time.</p>
+  </section>`;
+}
+function rateLine(d) {
+  const c = toCents(d.cash), ch = parseFloat(d.chips);
+  if (!(c > 0) || !(ch > 0)) return "Enter the cash buy-in and the chips it buys.";
+  return `1 chip = ${money(c / ch)} &middot; $1 = ${chipsFmt(ch / (c / 100))} chips`;
+}
+
+function liveView(s) {
+  const host = isHost(), ids = seats(s), p = pot(s);
+  const others = S.players.filter(pl => !ids.includes(pl.id));
+  return `
+  <div class="pot">
+    <div class="eyebrow"><span class="live-dot"></span>Live &middot; ${esc(fmtDate(s.date))}</div>
+    <span class="amt num">${money(p)}</span>
+    <div class="small dim num">${chipsFmt(toChips(s, p))} chips in play &middot; ${money(s.cashPerBuyin)} buys ${chipsFmt(s.chipsPerBuyin)}</div>
+  </div>
+  <section>
+    <div class="sec-head"><h2>At the table</h2><span class="dim small">${ids.length} seated</span></div>
+    <div class="panel">
+      ${ids.map(id => {
+        const n = s.entries.filter(e => e.playerId === id).length, b = buyin(s, id);
+        return `<div class="seat">
+          <div class="seat-top">
+            <div class="who"><button class="linkname" data-act="player" data-id="${id}">${esc(pname(id))}</button>
+              <div class="small dim num">${n} buy-in${n === 1 ? "" : "s"} &middot; ${money(b)} &middot; ${chipsFmt(toChips(s, b))} chips</div></div>
+            ${host ? `<div class="seat-btns"><button class="btn sm" data-act="rebuy" data-id="${id}">+ ${money(s.cashPerBuyin).replace(".00", "")}</button><button class="btn sm ghost" data-act="seat-open" data-id="${id}" aria-label="Edit ${esc(pname(id))}'s buy-ins">Edit</button></div>` : ""}
+          </div>
+          ${host ? `<label class="count small dim" for="count-${id}">Final chip count<input class="in" id="count-${id}" data-count="${id}" inputmode="decimal" placeholder="chips" value="${esc(s.counts[id] ?? "")}"></label>`
+                 : (s.counts[id] != null && s.counts[id] !== "" ? `<div class="small dim num" style="margin-top:6px">Cashed out with ${chipsFmt(Number(s.counts[id]))} chips</div>` : "")}
+        </div>`;
+      }).join("")}
+    </div>
+    ${host ? `
+    <div style="margin-top:16px">
+      ${others.length ? `<div class="eyebrow" style="margin-bottom:10px">Seat a latecomer</div><div class="picks">${others.map(pl => `<button class="pick" data-act="seat-add" data-id="${pl.id}">+ ${esc(pl.name)}</button>`).join("")}</div>` : ""}
+      <form class="inline" data-form="latecomer" style="margin-top:12px">
+        <label class="f">Someone new<input class="in" id="late-name" placeholder="Name" maxlength="24" autocomplete="off" style="font-family:var(--body)"></label>
+        <button class="btn ghost">Seat</button>
+      </form>
+    </div>` : ""}
+  </section>
+  <section>
+    <div class="sec-head"><h2>Chips to cash</h2></div>
+    <div class="panel pad">
+      <div class="inline">
+        <label class="f">Chips<input class="in" id="conv-chips" inputmode="decimal" placeholder="${chipsFmt(s.chipsPerBuyin)}"></label>
+        <div class="big" id="conv-out" style="padding-bottom:10px;min-width:96px;text-align:right">${money(s.cashPerBuyin)}</div>
+      </div>
+      <p class="rate">1 chip = ${money(chipValue(s))} tonight</p>
+    </div>
+  </section>
+  <section id="closeout">${closeoutView(s)}</section>
+  <section>
+    <div class="sec-head"><h2>Tonight's action</h2></div>
+    ${host ? `<label class="f" for="sess-notes">Notes for the log<textarea class="in" id="sess-notes" data-notes placeholder="Marco's birthday, dealer's choice after midnight">${esc(s.notes || "")}</textarea></label><div style="height:14px"></div>`
+           : (s.notes ? `<p class="note">${esc(s.notes)}</p>` : "")}
+    <ul class="feed">
+      ${[...s.entries].reverse().map(e => { const first = s.entries.find(x => x.playerId === e.playerId) === e;
+        return `<li><time>${fmtTime(e.t)}</time><span><strong>${esc(pname(e.playerId))}</strong> ${first ? "bought in for" : "rebought"} <span class="num">${money(e.amount)}</span></span></li>`; }).join("")}
+    </ul>
+  </section>`;
+}
+
+function closeoutView(s) {
+  const host = isHost(), r = results(s), ids = seats(s);
+  const missing = ids.filter(id => s.counts[id] == null || s.counts[id] === "").length;
+  let h = `<div class="sec-head"><h2>Cash-out</h2></div>`;
+  if (!r) {
+    h += `<p class="dim small">${host ? `Enter a final chip count for ${missing === ids.length ? "each player" : missing + " more player" + (missing === 1 ? "" : "s")} to see who's up and close the night.` : "Results appear once the host counts the chips."}</p>`;
+  } else {
+    const off = Math.round((r.counted - r.issued) * 100) / 100;
+    if (off) h += `<p class="warn">Counted ${chipsFmt(r.counted)} chips, but ${chipsFmt(r.issued)} were bought. ${chipsFmt(Math.abs(off))} ${off > 0 ? "extra" : "missing"}. Payouts are scaled to the chips counted so the tab still balances.</p>`;
+    h += resultsTable(r.res);
+  }
+  if (host) h += `<div class="actions"><button class="btn" data-act="close-session" ${r ? "" : "disabled"}>Close the night</button><button class="btn danger" data-act="cancel-session" data-confirm>Scrap this session</button></div>`;
+  return h;
+}
+function resultsTable(res) {
+  const rows = Object.entries(res).sort((a, b) => b[1].net - a[1].net);
+  return `<div class="tbl-scroll"><table><thead><tr><th>Player</th><th>In</th><th>Chips</th><th>Out</th><th>Net</th></tr></thead><tbody>
+    ${rows.map(([id, r]) => `<tr><td>${esc(pname(id))}</td><td class="num">${money(r.buyin)}</td><td class="num">${chipsFmt(r.chips)}</td><td class="num">${money(r.payout)}</td><td class="num ${tone(r.net)}">${signed(r.net)}</td></tr>`).join("")}
+  </tbody></table></div>`;
+}
+
+/* --- The tab --- */
+function ledgerView() {
+  const bal = seasonBalances(), open = openSessions();
+  const rows = Object.entries(bal).sort((a, b) => b[1] - a[1]);
+  const tx = transfers(bal);
+  const me = ui.me && S.players.find(p => p.id === ui.me);
+  let h = "";
+  if (me) h += `<div class="mine"><div><div class="eyebrow">Your tab</div><button class="linkname" data-act="player" data-id="${me.id}" style="margin-top:4px">${esc(me.name)}</button></div><div class="amt num ${tone(bal[me.id] || 0)}">${signed(bal[me.id] || 0)}</div></div>`;
+  if (!rows.length) {
+    h += `<section class="empty"><div class="eyebrow">Nothing owed</div><h2>The tab is clean</h2><p>Standings build up here after each night is closed. Positive means the table owes you; negative means you owe the table.</p></section>`;
+  } else {
+    h += `<section>
+      <div class="sec-head"><h2>Standings</h2><span class="dim small">${open.length} night${open.length === 1 ? "" : "s"} since ${esc(fmtDate(open.map(s => s.date).sort()[0]))}</span></div>
+      <div class="panel">${rows.map(([id, v], i) => `<div class="row"><span class="rank">${i + 1}</span><div class="who"><button class="linkname" data-act="player" data-id="${id}">${esc(pname(id))}</button></div><span class="big ${tone(v)}">${signed(v)}</span></div>`).join("")}</div>
+    </section>
+    <section>
+      <div class="sec-head"><h2>If you settled today</h2></div>
+      ${tx.length ? `<div class="panel">${tx.map(t => `<div class="xfer"><div class="t">${esc(pname(t.from))}<span class="arrow">pays</span>${esc(pname(t.to))}</div><span class="num">${money(t.amount)}</span></div>`).join("")}</div>
+        <p class="dim small" style="margin-top:10px">The fewest payments that square everyone up.</p>` : `<p class="dim small">Everyone is level. No payments needed.</p>`}
+      ${isHost() ? `<div class="actions"><button class="btn" data-act="settle" data-confirm>Settle up and start a new season</button></div>` : ""}
+    </section>`;
+  }
+  if (S.settlements.length) {
+    h += `<section><div class="sec-head"><h2>Past settle-ups</h2></div>
+      ${[...S.settlements].reverse().map((st, i) => {
+        const seasonNo = S.settlements.length - i, latest = i === 0;
+        return `<div class="panel" style="margin-bottom:12px"><div class="row"><div class="who"><strong>Season ${seasonNo}</strong> <span class="dim small">settled ${esc(fmtDate(st.date))} &middot; ${st.sessionIds.length} night${st.sessionIds.length === 1 ? "" : "s"}</span></div></div>
+          ${st.transfers.map((t, k) => `<div class="xfer"><div class="t">${esc(pname(t.from))}<span class="arrow">pays</span>${esc(pname(t.to))}</div><span class="num">${money(t.amount)}</span>
+            ${isHost() ? `<button class="paid ${t.paid ? "on" : ""}" data-act="paid" data-id="${st.id}" data-k="${k}" aria-pressed="${!!t.paid}">${t.paid ? "Paid" : "Mark paid"}</button>` : `<span class="paid ${t.paid ? "on" : ""}">${t.paid ? "Paid" : "Owed"}</span>`}</div>`).join("") || `<div class="row dim small">Everyone finished level.</div>`}
+          ${isHost() && latest && !liveSession() ? `<div class="row"><button class="btn sm danger" data-act="unsettle" data-id="${st.id}" data-confirm>Undo this settle-up</button></div>` : ""}
+        </div>`;
+      }).join("")}</section>`;
+  }
+  return h;
+}
+
+/* --- Player --- */
+function playerView(pid) {
+  const closed = S.sessions.filter(s => s.status === "closed" && s.results[pid]).sort((a, b) => a.date.localeCompare(b.date));
+  const nets = closed.map(s => s.results[pid].net);
+  const life = nets.reduce((a, b) => a + b, 0), season = seasonBalances()[pid] || 0;
+  const bought = closed.reduce((a, s) => a + s.results[pid].buyin, 0);
+  const wins = nets.filter(n => n > 0).length;
+  const live = liveSession(), inLive = live && seats(live).includes(pid);
+  return `
+  <button class="back" data-act="back">&larr; Back</button>
+  <div class="sec-head" style="align-items:center"><div><div class="eyebrow">Player</div><h2 style="font-size:28px;margin-top:4px">${esc(pname(pid))}</h2></div>
+    <button class="btn sm ghost" data-act="me" data-id="${pid}">${ui.me === pid ? "This is you" : "This is me"}</button></div>
+  <div class="mine" style="margin-top:8px"><div><div class="eyebrow">On the tab this season</div><div class="small dim" style="margin-top:4px">${season > 0 ? "The table owes them" : season < 0 ? "They owe the table" : "All square"}</div></div><div class="amt num ${tone(season)}">${signed(season)}</div></div>
+  ${inLive ? `<p class="warn">Playing tonight: ${money(buyin(live, pid))} in so far. Tonight counts once the session is closed.</p>` : ""}
+  <div class="stats">
+    <div><span class="k">All-time</span><span class="v ${tone(life)}">${signed(life)}</span></div>
+    <div><span class="k">Nights</span><span class="v">${closed.length}</span></div>
+    <div><span class="k">Winning nights</span><span class="v">${wins}</span></div>
+    <div><span class="k">Bought in</span><span class="v">${money(bought)}</span></div>
+    <div><span class="k">Best night</span><span class="v ${nets.length ? tone(Math.max(...nets)) : ""}">${nets.length ? signed(Math.max(...nets)) : "–"}</span></div>
+    <div><span class="k">Worst night</span><span class="v ${nets.length ? tone(Math.min(...nets)) : ""}">${nets.length ? signed(Math.min(...nets)) : "–"}</span></div>
+  </div>
+  ${nets.length > 1 ? `<div class="eyebrow">Running total, all nights</div>${spark(nets)}` : ""}
+  <section><div class="sec-head"><h2>Night by night</h2></div>
+    ${closed.length ? `<div class="tbl-scroll"><table><thead><tr><th>Night</th><th>Buy-ins</th><th>In</th><th>Out</th><th>Net</th></tr></thead><tbody>
+      ${[...closed].reverse().map(s => { const r = s.results[pid]; return `<tr><td>${esc(fmtDate(s.date))}</td><td class="num">${s.entries.filter(e => e.playerId === pid).length}</td><td class="num">${money(r.buyin)}</td><td class="num">${money(r.payout)}</td><td class="num ${tone(r.net)}">${signed(r.net)}</td></tr>`; }).join("")}
+    </tbody></table></div>` : `<p class="dim small">No finished nights yet.</p>`}
+  </section>`;
+}
+function spark(nets) {
+  let run = 0; const pts = [0, ...nets.map(n => (run += n))];
+  const W = 320, H = 90, P = 8, lo = Math.min(...pts), hi = Math.max(...pts), span = hi - lo || 1;
+  const x = i => P + i * (W - 2 * P) / (pts.length - 1), y = v => P + (hi - v) * (H - 2 * P) / span;
+  const last = pts[pts.length - 1];
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Running total across ${nets.length} nights, now ${signed(last)}">
+    <line x1="${P}" x2="${W - P}" y1="${y(0)}" y2="${y(0)}" stroke="rgba(244,236,214,.25)" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"/>
+    <polyline fill="none" stroke="#d9bd6a" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke" points="${pts.map((v, i) => x(i).toFixed(1) + "," + y(v).toFixed(1)).join(" ")}"/>
+    <circle cx="${x(pts.length - 1)}" cy="${y(last)}" r="3.5" fill="#d9bd6a"/></svg>`;
+}
+
+/* --- Log --- */
+function logView() {
+  const list = [...S.sessions].sort((a, b) => (b.date + (b.startedAt || "")).localeCompare(a.date + (a.startedAt || "")));
+  if (!list.length) return `<section class="empty"><div class="eyebrow">No nights logged</div><h2>The log starts with the first deal</h2><p>Every session lands here with who played, what they bought in for, and how it ended.</p>${isHost() ? `<button class="btn" data-act="tab" data-tab="tonight">Open tonight's game</button>` : ""}</section>`;
+  return `<section><div class="sec-head"><h2>Session log</h2><span class="dim small">${list.length} night${list.length === 1 ? "" : "s"}</span></div>
+  <div class="panel">${list.map(s => {
+    const ids = seats(s), live = s.status === "live";
+    const top = !live && Object.entries(s.results).sort((a, b) => b[1].net - a[1].net)[0];
+    return `<details class="sess"><summary><div><strong>${esc(fmtDate(s.date))}</strong>${live ? `<span class="tag">Live</span>` : s.settlementId ? `<span class="tag">Settled</span>` : ""}
+        <div class="small dim">${ids.length} players &middot; <span class="num">${money(pot(s))}</span> pot${top && top[1].net > 0 ? ` &middot; ${esc(pname(top[0]))} <span class="num up">${signed(top[1].net)}</span>` : ""}</div></div></summary>
+      <div class="body">
+        <p class="small dim num" style="margin:0 0 10px">${money(s.cashPerBuyin)} bought ${chipsFmt(s.chipsPerBuyin)} chips &middot; ${s.entries.length - ids.length} rebuy${s.entries.length - ids.length === 1 ? "" : "s"}</p>
+        ${live ? `<p class="small">${ids.map(id => esc(pname(id))).join(", ")}</p><button class="btn sm ghost" data-act="tab" data-tab="tonight">Go to the table</button>` : resultsTable(s.results)}
+        ${s.notes ? `<p class="note">${esc(s.notes)}</p>` : ""}
+        ${!live ? `<ul class="feed" style="margin-top:12px">${s.entries.map(e => `<li><time>${fmtTime(e.t)}</time><span>${esc(pname(e.playerId))} <span class="num">${money(e.amount)}</span></span></li>`).join("")}</ul>` : ""}
+        ${isHost() && !live && !s.settlementId ? `<div class="actions">${liveSession() ? "" : `<button class="btn sm ghost" data-act="reopen" data-id="${s.id}">Reopen to edit</button>`}<button class="btn sm danger" data-act="del-session" data-id="${s.id}" data-confirm>Delete night</button></div>` : ""}
+      </div></details>`;
+  }).join("")}</div></section>`;
+}
+
+/* --- Hands --- */
+const HANDS = [
+  ["Royal flush", "Ace, king, queen, jack, ten, all one suit. Unbeatable.", "As Ks Qs Js 10s", 5],
+  ["Straight flush", "Five in a row, all one suit.", "9h 8h 7h 6h 5h", 5],
+  ["Four of a kind", "All four of one rank.", "Qs Qh Qd Qc 4s", 4],
+  ["Full house", "Three of one rank and a pair of another.", "Ks Kh Kd 7c 7s", 5],
+  ["Flush", "Any five of one suit, not in a row.", "Ad Jd 8d 6d 3d", 5],
+  ["Straight", "Five in a row, mixed suits.", "10s 9d 8h 7c 6s", 5],
+  ["Three of a kind", "Three of one rank.", "8s 8h 8d Kc 4s", 3],
+  ["Two pair", "Two different pairs.", "Js Jd 5h 5c As", 4],
+  ["Pair", "Two of one rank.", "10h 10c As 8d 3c", 2],
+  ["High card", "Nothing connects. Highest card plays.", "As Jd 8c 6h 2s", 1]
+];
+const SUIT = { s: "♠︎", h: "♥︎", d: "♦︎", c: "♣︎" };
+function handsView() {
+  return `<section><div class="sec-head"><h2>What beats what</h2></div>
+    <div class="ladder eyebrow"><span>Strongest</span><span>Best five cards play</span></div>
+    <div class="panel">${HANDS.map(([name, desc, cards, live], i) => `<div class="hand"><span class="n">${i + 1}</span><div><h3>${name}</h3><p>${desc}</p>
+      <div class="cards" role="img" aria-label="Example: ${cards}">${cards.split(" ").map((c, k) => { const su = c.slice(-1), rk = c.slice(0, -1); return `<span class="pc ${su === "h" || su === "d" ? "red" : ""} ${k >= live ? "off" : ""}"><b>${rk}</b><i>${SUIT[su]}</i></span>`; }).join("")}</div></div></div>`).join("")}</div>
+    <div class="ladder eyebrow" style="margin-top:8px"><span>Weakest</span></div>
+  </section>
+  <section><div class="sec-head"><h2>Settling arguments</h2></div>
+    <div class="panel">
+      <div class="row"><div><strong>Same hand on both sides</strong><div class="small dim">Higher ranks win: a pair of kings beats a pair of nines. Still tied, the next highest side card (the kicker) decides.</div></div></div>
+      <div class="row"><div><strong>Suits never break a tie</strong><div class="small dim">If the best five cards match exactly, split the pot.</div></div></div>
+      <div class="row"><div><strong>The ace swings both ways</strong><div class="small dim">High in A-K-Q-J-10, low in 5-4-3-2-A. It can't wrap around: Q-K-A-2-3 is not a straight.</div></div></div>
+      <div class="row"><div><strong>Full houses</strong><div class="small dim">Compare the three of a kind first, then the pair.</div></div></div>
+      <div class="row"><div><strong>Faded cards above</strong><div class="small dim">Those are kickers. They only matter when the main hand ties.</div></div></div>
+    </div>
+  </section>`;
+}
+
+/* ---------- sheets ---------- */
+function renderSheet() {
+  const root = $("#sheet-root"), sh = ui.sheet;
+  if (!sh) { root.innerHTML = ""; return; }
+  let h = "";
+  if (sh.type === "host") {
+    h = `<h2>Host sign-in</h2><form data-form="host" autocomplete="off">
+      <label class="f" for="host-pin">Host PIN</label>
+      <input class="in pin" id="host-pin" maxlength="24" autocapitalize="characters" autocorrect="off" spellcheck="false" style="font-size:20px">
+      <div class="err" id="host-err" role="alert"></div>
+      <div class="actions"><button class="btn">Unlock</button><button type="button" class="btn ghost" data-act="close-sheet">Cancel</button></div></form>`;
+  } else if (sh.type === "seat") {
+    const s = liveSession(); if (!s) { ui.sheet = null; root.innerHTML = ""; return; }
+    const es = s.entries.filter(e => e.playerId === sh.id);
+    h = `<h2>${esc(pname(sh.id))}'s buy-ins</h2>
+      <div class="blk"><form class="inline" data-form="custom-buy">
+        <label class="f">Add a different amount $<input class="in" id="custom-amt" inputmode="decimal" placeholder="${(s.cashPerBuyin / 200).toFixed(2).replace(".00", "")}"></label>
+        <button class="btn">Add</button></form>
+        <p class="rate" id="custom-rate">For a half stack or a top-up.</p></div>
+      <div class="blk">${es.map(e => `<div class="xfer"><div class="t"><span class="num">${money(e.amount)}</span> <span class="dim small">${fmtTime(e.t)} &middot; ${chipsFmt(toChips(s, e.amount))} chips</span></div><button class="btn sm danger" data-act="del-entry" data-id="${e.id}" data-confirm>Remove</button></div>`).join("") || `<p class="dim small">No buy-ins left. This player is off tonight's table.</p>`}</div>
+      <button class="btn ghost wide" data-act="close-sheet">Done</button>`;
+  } else if (sh.type === "settings") {
+    h = `<h2>Host settings</h2>
+      <div class="blk"><form class="inline" data-form="group"><label class="f">Game name<input class="in" id="set-group" maxlength="32" value="${esc(S.group.name)}" style="font-family:var(--body)"></label><button class="btn ghost">Save</button></form></div>
+      <div class="blk"><div class="eyebrow" style="margin-bottom:12px">PINs</div>
+        <form data-form="pins" autocomplete="off"><div class="grid2">
+          <label class="f">New table PIN<input class="in" id="set-view" maxlength="4" placeholder="4 characters" autocapitalize="characters" style="text-transform:uppercase"></label>
+          <label class="f">New host PIN<input class="in" id="set-host" maxlength="24" placeholder="4 or more" autocapitalize="characters" style="text-transform:uppercase"></label></div>
+          <div class="err" id="pins-err" role="alert"></div>
+          <button class="btn ghost">Change PINs</button>
+          <p class="dim small" style="margin:10px 0 0">Leave one blank to keep it. Friends use the table PIN to view. Share the host PIN only with co-hosts. Changing a PIN signs out everyone using the old one.</p></form></div>
+      <div class="blk"><div class="eyebrow" style="margin-bottom:12px">Players</div>
+        ${S.players.map(p => `<div class="inline" style="margin-bottom:8px"><input class="in" style="margin:0;font-family:var(--body)" data-rename="${p.id}" maxlength="24" value="${esc(p.name)}" aria-label="Rename ${esc(p.name)}"></div>`).join("") || `<p class="dim small">Players appear here once added.</p>`}
+        ${S.players.length ? `<p class="dim small" style="margin:6px 0 0">Edit a name and tap away to rename it everywhere.</p>` : ""}</div>
+      <div class="blk"><div class="actions" style="margin:0"><button class="btn ghost sm" data-act="backup">Copy a backup</button><button class="btn ghost sm" data-act="leave-host">Leave host mode</button><button class="btn ghost sm" data-act="signout">Sign out</button></div></div>
+      <button class="btn wide" data-act="close-sheet">Done</button>`;
+  }
+  root.innerHTML = `<div class="scrim" data-act="scrim"><div class="sheet" role="dialog" aria-modal="true">${h}</div></div>`;
+  const first = $(".sheet input", root); if (first && sh.type !== "settings") first.focus();
+}
+
+/* ---------- actions ---------- */
+function addPlayer(d, name) {
+  name = name.trim().replace(/\s+/g, " ");
+  if (!name) return null;
+  const hit = d.players.find(p => p.name.toLowerCase() === name.toLowerCase());
+  if (hit) return hit.id;
+  const p = { id: uid(), name }; d.players.push(p); return p.id;
+}
+const addEntry = (s, pid, amount) => s.entries.push({ id: uid(), playerId: pid, amount, t: new Date().toISOString() });
+
+const actions = {
+  tab(el) { ui.tab = el.dataset.tab; ui.player = null; try { history.replaceState(null, "", "#" + ui.tab); } catch {} render(); scrollTo(0, 0); },
+  player(el) { ui.player = el.dataset.id; render(); scrollTo(0, 0); },
+  back() { ui.player = null; render(); },
+  me(el) { ui.me = ui.me === el.dataset.id ? null : el.dataset.id; ls.set("me", ui.me); render(); },
+  "host-open"() { ui.sheet = { type: "host" }; renderSheet(); },
+  settings() { ui.sheet = { type: "settings" }; renderSheet(); },
+  "close-sheet"() { ui.sheet = null; render(); },
+  scrim(el, e) { if (e.target === el) actions["close-sheet"](); },
+  pick(el) { const d = ui.draft, id = el.dataset.id; d.picked = d.picked.includes(id) ? d.picked.filter(x => x !== id) : [...d.picked, id]; render(); },
+  async start() {
+    const d = ui.draft, cash = toCents(d.cash), chips = parseFloat(d.chips);
+    if (!(cash > 0) || !(chips > 0)) return toast("Enter the buy-in and the chips it buys.");
+    if (d.picked.length < 2) return toast("Seat at least two players.");
+    const ok = await mutate(st => {
+      if (st.sessions.some(s => s.status === "live")) return false;
+      const s = { id: uid(), date: d.date || today(), status: "live", startedAt: new Date().toISOString(), cashPerBuyin: cash, chipsPerBuyin: chips, entries: [], counts: {}, results: {}, notes: "", settlementId: null };
+      d.picked.forEach(id => addEntry(s, id, cash));
+      st.sessions.push(s);
+    });
+    if (ok) ui.draft = null;
+  },
+  rebuy(el) { mutate(st => { const s = st.sessions.find(x => x.status === "live"); if (!s) return false; addEntry(s, el.dataset.id, s.cashPerBuyin); }).then(ok => ok && toast(pname(el.dataset.id) + " rebought")); },
+  "seat-add"(el) { mutate(st => { const s = st.sessions.find(x => x.status === "live"); if (!s) return false; addEntry(s, el.dataset.id, s.cashPerBuyin); }); },
+  "seat-open"(el) { ui.sheet = { type: "seat", id: el.dataset.id }; renderSheet(); },
+  "del-entry"(el) { mutate(st => { const s = st.sessions.find(x => x.status === "live"); if (!s) return false; s.entries = s.entries.filter(e => e.id !== el.dataset.id); seats(s).length; Object.keys(s.counts).forEach(id => { if (!s.entries.some(e => e.playerId === id)) delete s.counts[id]; }); }); },
+  "close-session"() {
+    mutate(st => { const s = st.sessions.find(x => x.status === "live"); const r = s && results(s); if (!r) return false; s.results = r.res; s.status = "closed"; s.closedAt = new Date().toISOString(); })
+      .then(ok => { if (ok) { ui.tab = "ledger"; render(); scrollTo(0, 0); toast("Night closed. The tab is updated."); } });
+  },
+  "cancel-session"() { mutate(st => { st.sessions = st.sessions.filter(s => s.status !== "live"); }); },
+  reopen(el) { mutate(st => { if (st.sessions.some(s => s.status === "live")) return false; const s = st.sessions.find(x => x.id === el.dataset.id); if (!s || s.settlementId) return false; s.status = "live"; s.results = {}; }).then(ok => { if (ok) actions.tab({ dataset: { tab: "tonight" } }); }); },
+  "del-session"(el) { mutate(st => { st.sessions = st.sessions.filter(s => s.id !== el.dataset.id || s.settlementId); }); },
+  settle() {
+    mutate(st => {
+      const open = st.sessions.filter(s => s.status === "closed" && !s.settlementId);
+      if (!open.length) return false;
+      const bal = {}; open.forEach(s => Object.entries(s.results).forEach(([id, r]) => (bal[id] = (bal[id] || 0) + r.net)));
+      const rec = { id: uid(), date: today(), balances: bal, transfers: transfers(bal), sessionIds: open.map(s => s.id) };
+      open.forEach(s => (s.settlementId = rec.id)); st.settlements.push(rec);
+    }).then(ok => ok && toast("Season settled. Balances are back to zero."));
+  },
+  unsettle(el) { mutate(st => { const last = st.settlements[st.settlements.length - 1]; if (!last || last.id !== el.dataset.id) return false; st.sessions.forEach(s => { if (s.settlementId === last.id) s.settlementId = null; }); st.settlements.pop(); }); },
+  paid(el) { mutate(st => { const t = (st.settlements.find(x => x.id === el.dataset.id) || { transfers: [] }).transfers[+el.dataset.k]; if (!t) return false; t.paid = !t.paid; }); },
+  async backup() {
+    const text = JSON.stringify(S);
+    try { await navigator.clipboard.writeText(text); toast("Backup copied. Paste it somewhere safe."); } catch { toast("Couldn't copy on this device."); }
+  },
+  "leave-host"() { hostPin = null; ls.set("hostPin", null); role = "viewer"; ui.sheet = null; if (!pin) return actions.signout(); render(); },
+  signout() { pin = hostPin = null; ls.set("pin", null); ls.set("hostPin", null); S = null; role = null; ui.sheet = null; render(); renderSheet(); }
+};
+
+const forms = {
+  async gate() {
+    const v = $("#gate-pin").value.trim();
+    if (!v) return;
+    try {
+      const res = await store.load(v);
+      if (!res.ok) { $("#app").innerHTML = gateView("That PIN doesn't match. Check with the host."); $("#gate-pin").focus(); return; }
+      if (res.role === "host") { hostPin = v; ls.set("hostPin", v); } else { pin = v; ls.set("pin", v); }
+      S = normalize(res.state); version = res.version; role = res.role; render();
+    } catch { $("#app").innerHTML = gateView("Couldn't reach the books. Check your connection."); }
+  },
+  async host() {
+    const v = $("#host-pin").value.trim();
+    try {
+      const res = await store.load(v);
+      if (!res.ok || res.role !== "host") { $("#host-err").textContent = "That isn't the host PIN."; return; }
+      hostPin = v; ls.set("hostPin", v); S = normalize(res.state); version = res.version; role = "host"; ui.sheet = null; render(); toast("Host mode on");
+    } catch { $("#host-err").textContent = "Couldn't reach the books."; }
+  },
+  roster() {
+    const name = $("#roster-name").value; if (!name.trim()) return;
+    let id; mutate(st => { id = addPlayer(st, name); }, { quiet: true }).then(ok => { if (ok && id && !ui.draft.picked.includes(id)) ui.draft.picked.push(id); render(); });
+  },
+  latecomer() {
+    const name = $("#late-name").value; if (!name.trim()) return;
+    mutate(st => { const s = st.sessions.find(x => x.status === "live"); if (!s) return false; const id = addPlayer(st, name); if (s.entries.some(e => e.playerId === id)) return false; addEntry(s, id, s.cashPerBuyin); });
+  },
+  "custom-buy"() {
+    const c = toCents($("#custom-amt").value), pid = ui.sheet.id;
+    if (!(c > 0)) return toast("Enter an amount.");
+    mutate(st => { const s = st.sessions.find(x => x.status === "live"); if (!s) return false; addEntry(s, pid, c); });
+  },
+  group() { const v = $("#set-group").value.trim(); if (v) mutate(st => { st.group.name = v; }).then(ok => ok && toast("Name saved")); },
+  async pins() {
+    const v = $("#set-view").value.trim(), h = $("#set-host").value.trim(), err = $("#pins-err");
+    if (!v && !h) { err.textContent = "Enter a new PIN in at least one box."; return; }
+    try {
+      const res = await store.setPins(hostPin, v || null, h || null);
+      if (!res.ok) { err.textContent = { view_length: "The table PIN must be exactly 4 characters.", host_length: "The host PIN needs at least 4 characters.", same: "The two PINs must be different.", bad_pin: "Your host sign-in has expired." }[res.reason] || "Couldn't change the PINs."; return; }
+      if (h) { hostPin = h; ls.set("hostPin", h); }
+      if (v && pin) { pin = v; ls.set("pin", v); }
+      ui.sheet = null; render(); toast("PINs changed");
+    } catch { err.textContent = "Couldn't reach the books."; }
+  }
+};
+
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-act]"); if (!el || el.disabled) return;
+  if (el.hasAttribute("data-confirm") && !el.classList.contains("armed")) {
+    const label = el.textContent; el.classList.add("armed"); el.textContent = "Tap again to confirm";
+    setTimeout(() => { if (el.isConnected) { el.classList.remove("armed"); el.textContent = label; } }, 3000);
+    return;
+  }
+  const fn = actions[el.dataset.act]; if (fn) fn(el, e);
+});
+document.addEventListener("submit", e => { const f = e.target.closest("[data-form]"); if (!f) return; e.preventDefault(); forms[f.dataset.form](); });
+document.addEventListener("input", e => {
+  const t = e.target;
+  if (t.dataset.draft && ui.draft) { ui.draft[t.dataset.draft] = t.value; const r = $("#st-rate"); if (r) r.innerHTML = rateLine(ui.draft); }
+  else if (t.id === "conv-chips") { const s = liveSession(), n = parseFloat(t.value); $("#conv-out").textContent = money((isFinite(n) ? n : s.chipsPerBuyin) * chipValue(s)); }
+  else if (t.id === "custom-amt") { const s = liveSession(), c = toCents(t.value); $("#custom-rate").textContent = c > 0 ? `${money(c)} buys ${chipsFmt(toChips(s, c))} chips` : "For a half stack or a top-up."; }
+});
+// Saved without a full redraw so the next field keeps focus while counting chips.
+document.addEventListener("change", e => {
+  const t = e.target;
+  if (t.dataset.count) {
+    const id = t.dataset.count, raw = t.value.trim(), n = parseFloat(raw);
+    if (raw && !(n >= 0)) { toast("Enter a chip count."); return; }
+    mutate(st => { const s = st.sessions.find(x => x.status === "live"); if (!s) return false; if (raw) s.counts[id] = n; else delete s.counts[id]; }, { quiet: true })
+      .then(() => { const s = liveSession(), c = $("#closeout"); if (s && c) c.innerHTML = closeoutView(s); });
+  } else if (t.hasAttribute("data-notes")) {
+    mutate(st => { const s = st.sessions.find(x => x.status === "live"); if (!s) return false; s.notes = t.value.trim(); }, { quiet: true });
+  } else if (t.dataset.rename) {
+    const v = t.value.trim(); if (!v) return;
+    mutate(st => { const p = st.players.find(x => x.id === t.dataset.rename); if (!p) return false; p.name = v; }, { quiet: true }).then(ok => ok && toast("Renamed"));
+  }
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape" && ui.sheet) actions["close-sheet"](); });
+document.addEventListener("visibilitychange", () => { if (!document.hidden) poll(); });
+setInterval(poll, 15000);
+
+/* ---------- boot ---------- */
+(async () => {
+  const h = location.hash.slice(1); if (["tonight", "ledger", "log", "hands"].includes(h)) ui.tab = h;
+  if (pin || hostPin) {
+    try { if (!(await load())) { pin = null; ls.set("pin", null); } }
+    catch { $("#app").innerHTML = gateView("Couldn't reach the books. Check your connection."); return; }
+  }
+  render();
+})();
+})();
+</script>
+</body>
+</html>
