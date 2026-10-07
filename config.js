@@ -2,6 +2,6 @@
 // Both values are safe to publish: the database only answers to the PINs.
 // Leave them empty to run in demo mode, where data stays on this device.
 window.POKER_CONFIG = {
-  supabaseUrl: "https://supabase.com/dashboard/project/ryhghgnjqyricqhvapmf",
+  supabaseUrl: "https://ryhghgnjqyricqhvapmf.supabase.co",
   supabaseKey: "sb_publishable_0kFz4yRweJUVjMTOHgIPTg_W13jJ3Pk"
 };
