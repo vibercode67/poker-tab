@@ -13,7 +13,7 @@
 /* Layout: one phone-width column on green baize, gold-ruled sections, a four-suit tab bar pinned to the bottom. */
 :root {
   color-scheme: dark;
-  --cardback: radial-gradient(circle at 50% 50%, #d9bd6a 0 5px, #7d0f1a 5.5px 9px, #d9bd6a 9.5px 11px, transparent 11.5px), repeating-linear-gradient(45deg, rgba(255, 255, 255, .2) 0 1.5px, transparent 1.5px 9px), repeating-linear-gradient(-45deg, rgba(255, 255, 255, .2) 0 1.5px, transparent 1.5px 9px), radial-gradient(circle at 50% 50%, #b3202c, #7d0f1a);
+  --cardback: repeating-linear-gradient(45deg, rgba(255, 255, 255, .2) 0 1.5px, transparent 1.5px 9px), repeating-linear-gradient(-45deg, rgba(255, 255, 255, .2) 0 1.5px, transparent 1.5px 9px), radial-gradient(circle at 50% 50%, #b3202c, #7d0f1a);
   --felt: #0f3d2e;
   --felt-lit: #16543f;
   --felt-deep: #0a2c21;
@@ -381,7 +381,10 @@ nav.tabs button[aria-current="page"] { color: var(--gold); border-top-color: var
 @keyframes slidechip { 0% { left: 0; opacity: 0; transform: translateY(0) rotate(0); } 8% { opacity: 1; } 25% { transform: translateY(-9px) rotate(180deg); } 50% { left: calc(100% - 30px); opacity: 1; transform: translateY(0) rotate(360deg); } 62%, 100% { left: calc(100% - 30px); opacity: 0; transform: rotate(360deg); } }
 
 /* picking players: face-down until they're in */
-.pgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; perspective: 800px; }
+.pgrid { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; perspective: 800px; }
+.pgrid .pcard { width: calc((100% - 24px) / 3); max-width: 150px; }
+.pgrid.two { max-width: 330px; margin-inline: auto; }
+.pgrid.two .pcard { width: calc((100% - 12px) / 2); }
 .pcard { position: relative; aspect-ratio: 5 / 6.8; border-radius: 10px; border: 4px solid var(--card); background: var(--cardback); color: var(--ink); padding: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 6px 12px rgba(0, 0, 0, .35); transition: transform .2s, box-shadow .2s; }
 .pcard::before { content: ""; position: absolute; inset: 4px; border: 1.5px solid rgba(217, 189, 106, .85); border-radius: 5px; pointer-events: none; }
 .pcard[aria-pressed="true"]::before { border-color: rgba(23, 35, 29, .14); }
@@ -673,7 +676,6 @@ function gateView(err = "") {
     <p>Enter the table PIN to see the books.</p>
     <form class="qcard" data-form="gate" autocomplete="off">
       <span class="corner" aria-hidden="true">Q<i>&hearts;&#xFE0E;</i></span>
-      <span class="q-crown" aria-hidden="true">&#x265B;&#xFE0E;</span>
       <label for="gate-pin">Table PIN</label>
       <input class="q-pin" id="gate-pin" maxlength="12" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-describedby="gate-err">
       <div class="err" id="gate-err" role="alert">${esc(err)}</div>
@@ -725,7 +727,7 @@ function startView() {
     <div class="eyebrow">Step 2 of 2 &middot; The players</div>
     <div class="sec-head" style="margin:0"><h2>Who's in?</h2><span class="dim small" id="st-n">${d.picked.length} seated</span></div>
     <p class="dim small" style="margin:-6px 0 16px">${money(toCents(d.cash)).replace(".00", "")} buys ${esc(d.chips)} chips each. Tap everyone who's playing.</p>
-    <div class="pgrid">
+    <div class="pgrid ${roster.length === 4 || roster.length === 2 ? "two" : ""}">
       ${roster.map((p, i) => `<button class="pcard ${i % 2 ? "red" : ""} ${ui.justAdded === p.id ? "flip" : ""}" data-act="pick" data-id="${p.id}" aria-pressed="${d.picked.includes(p.id)}"><span class="pc-suit" aria-hidden="true">${["\u2660\uFE0E", "\u2665\uFE0E", "\u2663\uFE0E", "\u2666\uFE0E"][i % 4]}</span><span class="pc-name">${esc(p.name)}</span><span class="pc-in">In</span></button>`).join("")}
     </div>
     ${roster.length ? "" : `<p class="dim small">No players yet. Add the first name below.</p>`}
@@ -873,8 +875,8 @@ function ledgerView() {
   } else {
     h += `<section>
       <div class="sec-head"><h2>Standings</h2><span class="dim small">${open.length} night${open.length === 1 ? "" : "s"} since ${esc(fmtDate(open.map(s => s.date).sort()[0]))}</span></div>
-      <div class="hand-grid">${rows.map(([id, v], i) => { const rk = rows.length < 2 ? "A" : RANKS[Math.round(i * 12 / (rows.length - 1))], su = v < 0 ? "\u2665\uFE0E" : "\u2660\uFE0E";
-        return `<button class="scard ${v < 0 ? "red" : ""}" style="--i:${i}" data-act="player" data-id="${id}" aria-label="${esc(pname(id))}, ${signed(v)}"><span class="corner" aria-hidden="true">${rk}<i>${su}</i></span><span class="s-pip" aria-hidden="true">${su}</span><span class="s-nm">${esc(pname(id))}</span><span class="s-amt ${tone(v)}">${signed(v)}</span><span class="corner br" aria-hidden="true">${rk}<i>${su}</i></span></button>`; }).join("")}</div>
+      <div class="hand-grid">${rows.map(([id, v], i) => { const rk = rows.length < 2 ? "A" : RANKS[Math.round(i * 12 / (rows.length - 1))], su = ["\u2660\uFE0E", "\u2666\uFE0E", "\u2663\uFE0E", "\u2665\uFE0E"][i % 4];
+        return `<button class="scard ${i % 2 ? "red" : ""}" style="--i:${i}" data-act="player" data-id="${id}" aria-label="${esc(pname(id))}, ${signed(v)}"><span class="corner" aria-hidden="true">${rk}<i>${su}</i></span><span class="s-pip" aria-hidden="true">${su}</span><span class="s-nm">${esc(pname(id))}</span><span class="s-amt ${tone(v)}">${signed(v)}</span><span class="corner br" aria-hidden="true">${rk}<i>${su}</i></span></button>`; }).join("")}</div>
     </section>
     <section>
       <div class="sec-head"><h2>If you settled today</h2>${opts.length > 1 ? `<span class="dim small">Option ${oi + 1} of ${opts.length}</span>` : ""}</div>
@@ -908,7 +910,7 @@ function playerView(pid) {
   const live = liveSession(), inLive = live && seats(live).includes(pid);
   return `
   <button class="back" data-act="back">&larr; Back</button>
-  <div class="sec-head" style="align-items:center"><div><div class="eyebrow">Player</div><h2 style="font-size:28px;margin-top:4px">${esc(pname(pid))}</h2></div>
+  <div class="sec-head" style="align-items:center"><h2 style="font-size:30px">${esc(pname(pid))}</h2>
     <button class="btn sm ghost" data-act="me" data-id="${pid}">${ui.me === pid ? "This is you" : "This is me"}</button></div>
   <div class="mine" style="margin-top:8px"><div><div class="eyebrow">On the tab right now</div><div class="small dim" style="margin-top:4px">${season > 0 ? "The table owes them" : season < 0 ? "They owe the table" : "All square"}</div></div><div class="amt num ${tone(season)}">${signed(season)}</div></div>
   ${inLive ? `<p class="warn">Playing tonight: ${money(buyin(live, pid))} in so far. Tonight counts once the session is closed.</p>` : ""}
