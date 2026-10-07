@@ -51,10 +51,10 @@ PINs are not case sensitive. Changing one signs out everyone who was using the o
 
 1. **Tonight**: set the cash buy-in and how many chips it buys (for example $20 buys 50), tap who's in, **Deal them in**.
 2. Tap **+ $20** for a rebuy. **Edit** adds a different amount or removes a mistake. Seat latecomers at any point.
-3. At the end, type each player's final chip count. The cash-out table shows what the chips are worth and who is up or down. If the count is a few chips off, payouts are scaled so the night still balances to zero.
+3. At the end, type each player's final chip count. The cash-out table shows what the chips are worth and who is up or down. A tally shows chips counted against chips in play as you type. The night can only be closed once the count matches exactly.
 4. **Close the night**. Results move onto the tab.
 
-Nothing is paid on the night. **The tab** shows running balances and the fewest payments that would square everyone. When the quarter is up, the host taps **Settle up and start a new season**, then marks each payment as paid.
+Nothing is paid on the night. **The tab** shows running balances and the fewest payments that would square everyone. When the quarter is up, the host picks a payment plan (**Show another way** cycles through the options), taps **Settle up this way and clear the tab**, then marks each payment as paid. The latest settle-up can be undone.
 
 ## Good to know
 
@@ -62,3 +62,14 @@ Nothing is paid on the night. **The tab** shows running balances and the fewest 
 - **Host → Copy a backup** copies the whole book as text. Paste it into a note every so often.
 - Free Supabase projects pause after a week with no visits. If the site says it can't reach the books, open your Supabase dashboard and press **Restore**.
 - Add it to a phone's home screen from the browser's share menu to use it like an app.
+
+## More than one game
+
+One site can hold several completely separate games (for example a second friend group). Each has its own players, tab, log, table PIN and host PIN.
+
+- When there is more than one game, the PIN screen shows a **Choose your game** row. Pick the game, then enter that game's PIN.
+- To add a game: sign in as host of your first game, open **Host**, and fill in **Start another game** (name, table PIN, host PIN).
+- Only hosts of the first game can add or delete games. Deleting a game erases its history for good.
+- **Switch game** on the lobby takes you back to the game list. A phone remembers the PIN for each game it has signed in to.
+
+If you set the site up before this feature existed, run the current `supabase.sql` once in the Supabase SQL editor before uploading the new `index.html`. It copies your existing game across unchanged.

@@ -232,6 +232,9 @@ nav.tabs button[aria-current="page"] { color: var(--gold); border-top-color: var
 .gate h1 { font-size: 40px; margin-bottom: 10px; }
 .gate p { color: var(--ivory-dim); margin: 0 0 26px; }
 .gate h1 { font-size: clamp(34px, 10vw, 46px); line-height: 1.05; }
+.gpick { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 26px; max-width: 420px; }
+.gp { background: none; border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; min-height: 40px; color: var(--ivory); font-size: 15px; transition: background-color .18s, color .18s, border-color .18s; }
+.gp[aria-checked="true"] { background: var(--gold); border-color: var(--gold); color: var(--felt-deep); font-weight: 600; }
 .gate .qcard { position: relative; width: 244px; max-width: 100%; aspect-ratio: 5 / 7.5; border-radius: 16px; background: var(--card); color: var(--ink); padding: 52px 26px 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 1px 0 #fff inset, 0 26px 50px rgba(0, 0, 0, .55); animation: winflip .9s cubic-bezier(.2, .8, .2, 1) .3s backwards; }
 .qcard::after { content: ""; position: absolute; inset: 8px; border: 1px solid rgba(23, 35, 29, .16); border-radius: 10px; pointer-events: none; }
 .qcard .corner { position: absolute; top: 14px; left: 16px; font: 700 30px/1 var(--display); color: var(--suit-red); display: flex; flex-direction: column; align-items: center; gap: 2px; }
@@ -467,31 +470,56 @@ async function rpc(name, body) {
   return r.json();
 }
 const remoteStore = {
-  load: pin => rpc("poker_get", { p_pin: pin }),
-  save: (pin, state, version) => rpc("poker_save", { p_pin: pin, p_state: state, p_version: version }),
-  setPins: (pin, view, host) => rpc("poker_set_pins", { p_pin: pin, p_view: view, p_host: host })
+  games: () => rpc("poker_games", {}),
+  load: (g, pin) => rpc("poker_get", { p_game: g, p_pin: pin }),
+  save: (g, pin, state, version) => rpc("poker_save", { p_game: g, p_pin: pin, p_state: state, p_version: version }),
+  setPins: (g, pin, view, host) => rpc("poker_set_pins", { p_game: g, p_pin: pin, p_view: view, p_host: host }),
+  create: (pin, name, view, host) => rpc("poker_create_game", { p_pin: pin, p_name: name, p_view: view, p_host: host }),
+  remove: (pin, g) => rpc("poker_delete_game", { p_pin: pin, p_game: g })
 };
 const localStore = (() => {
-  const read = () => { try { return JSON.parse(ls.get("book")) || null; } catch { return null; } };
-  const book = () => read() || { state: {}, version: 0, view: "DEAL", host: "BANKER" };
-  const role = (b, pin) => { const p = String(pin || "").toUpperCase(); return p === b.host ? "host" : p === b.view ? "viewer" : null; };
+  const key = g => (g === "main" ? "book" : "book:" + g);
+  const read = k => { try { return JSON.parse(ls.get(k)) || null; } catch { return null; } };
+  const book = g => read(key(g)) || (g === "main" ? { state: {}, version: 0, view: "DEAL", host: "BANKER" } : null);
+  const list = () => read("games") || [{ id: "main", name: ((book("main").state || {}).group || {}).name || CFG.gameName || "Poker Night", house: true }];
+  const role = (b, pin) => { const p = String(pin || "").toUpperCase(); return !b ? null : p === b.host ? "host" : p === b.view ? "viewer" : null; };
+  const pinsOk = (view, host) => (view && view.length !== 4 ? "view_length" : host && host.length < 4 ? "host_length" : null);
   return {
-    async load(pin) { const b = book(), r = role(b, pin); return r ? { ok: true, role: r, version: b.version, state: b.state } : { ok: false, reason: "bad_pin" }; },
-    async save(pin, state, version) {
-      const b = book();
+    async games() { return list(); },
+    async load(g, pin) { const b = book(g), r = role(b, pin); return r ? { ok: true, role: r, version: b.version, state: b.state } : { ok: false, reason: "bad_pin" }; },
+    async save(g, pin, state, version) {
+      const b = book(g);
       if (role(b, pin) !== "host") return { ok: false, reason: "bad_pin" };
       if (b.version !== version) return { ok: false, reason: "conflict" };
-      b.state = state; b.version++; ls.set("book", JSON.stringify(b));
+      b.state = state; b.version++; ls.set(key(g), JSON.stringify(b));
+      const name = (state.group || {}).name;
+      if (name) ls.set("games", JSON.stringify(list().map(x => (x.id === g ? { ...x, name } : x))));
       return { ok: true, version: b.version };
     },
-    async setPins(pin, view, host) {
-      const b = book();
+    async setPins(g, pin, view, host) {
+      const b = book(g);
       if (role(b, pin) !== "host") return { ok: false, reason: "bad_pin" };
+      const bad = pinsOk(view, host); if (bad) return { ok: false, reason: bad };
       const v = view ? view.toUpperCase() : b.view, h = host ? host.toUpperCase() : b.host;
-      if (view && view.length !== 4) return { ok: false, reason: "view_length" };
-      if (host && host.length < 4) return { ok: false, reason: "host_length" };
       if (v === h) return { ok: false, reason: "same" };
-      b.view = v; b.host = h; ls.set("book", JSON.stringify(b));
+      b.view = v; b.host = h; ls.set(key(g), JSON.stringify(b));
+      return { ok: true };
+    },
+    async create(pin, name, view, host) {
+      if (role(book("main"), pin) !== "host") return { ok: false, reason: "bad_pin" };
+      if (!name) return { ok: false, reason: "name" };
+      if (list().some(x => x.name.toLowerCase() === name.toLowerCase())) return { ok: false, reason: "name_taken" };
+      const bad = pinsOk(view, host) || (!view ? "view_length" : !host ? "host_length" : null); if (bad) return { ok: false, reason: bad };
+      if (view.toUpperCase() === host.toUpperCase()) return { ok: false, reason: "same" };
+      const id = "g" + uid();
+      ls.set(key(id), JSON.stringify({ state: { group: { name } }, version: 0, view: view.toUpperCase(), host: host.toUpperCase() }));
+      ls.set("games", JSON.stringify([...list(), { id, name, house: false }]));
+      return { ok: true, id };
+    },
+    async remove(pin, g) {
+      if (role(book("main"), pin) !== "host") return { ok: false, reason: "bad_pin" };
+      if (g === "main") return { ok: false, reason: "house" };
+      ls.set(key(g), null); ls.set("games", JSON.stringify(list().filter(x => x.id !== g)));
       return { ok: true };
     }
   };
@@ -500,8 +528,14 @@ const store = REMOTE ? remoteStore : localStore;
 
 /* ---------- state ---------- */
 let S = null, version = 0, role = null;
-let pin = ls.get("pin"), hostPin = ls.get("hostPin");
-const ui = { tab: "home", lastKey: null, player: null, sheet: null, draft: null, txOpt: 0, override: false, me: ls.get("me") };
+// Each game keeps its own sign-in on this device. Sign-ins from before games existed belong to the first game.
+["pin", "hostPin", "me"].forEach(k => { const v = ls.get(k); if (v) { ls.set(k + ":main", v); ls.set(k, null); } });
+let games = [], game = ls.get("game") || "main";
+const pinKey = k => k + ":" + game;
+let pin = null, hostPin = null;
+const ui = { tab: "home", lastKey: null, player: null, sheet: null, draft: null, txOpt: 0, override: false, me: null };
+function usePins() { pin = ls.get(pinKey("pin")); hostPin = ls.get(pinKey("hostPin")); ui.me = ls.get(pinKey("me")); }
+const thisGame = () => games.find(g => g.id === game) || {};
 
 function normalize(s) {
   s = s && typeof s === "object" ? s : {};
@@ -576,8 +610,8 @@ const optionLabel = o => ({ fewest: "Fewest payments", pairing: "Same total, pai
 /* ---------- loading and saving ---------- */
 async function load() {
   let res = null;
-  if (hostPin) { res = await store.load(hostPin); if (!res.ok || res.role !== "host") { hostPin = null; ls.set("hostPin", null); res = null; } }
-  if (!res && pin) res = await store.load(pin);
+  if (hostPin) { res = await store.load(game, hostPin); if (!res.ok || res.role !== "host") { hostPin = null; ls.set(pinKey("hostPin"), null); res = null; } }
+  if (!res && pin) res = await store.load(game, pin);
   if (!res || !res.ok) return false;
   S = normalize(res.state); version = res.version; role = res.role;
   return true;
@@ -590,10 +624,10 @@ async function mutate(fn, opts = {}) {
     for (let attempt = 0; attempt < 3; attempt++) {
       const draft = structuredClone(S);
       if (fn(draft) === false) return false;
-      const res = await store.save(hostPin, draft, version);
+      const res = await store.save(game, hostPin, draft, version);
       if (res.ok) { S = draft; version = res.version; if (!opts.quiet) render(); return true; }
       if (res.reason === "conflict") { await load(); continue; }
-      if (res.reason === "bad_pin") { hostPin = null; ls.set("hostPin", null); role = "viewer"; render(); toast("Host PIN has changed. Sign in as host again."); return false; }
+      if (res.reason === "bad_pin") { hostPin = null; ls.set(pinKey("hostPin"), null); role = "viewer"; render(); toast("Host PIN has changed. Sign in as host again."); return false; }
       break;
     }
     toast("Couldn't save. Try again.");
@@ -613,7 +647,7 @@ async function poll() {
 function render() {
   const app = $("#app");
   if (!S) { document.title = gateName(); app.innerHTML = gateView(); return; }
-  document.title = S.group.name; ls.set("name", S.group.name);
+  document.title = S.group.name; if (thisGame().name !== S.group.name) games = games.map(g => (g.id === game ? { ...g, name: S.group.name } : g));
   const n = openSessions().length;
   const key = ui.player ? "p:" + ui.player : ui.tab === "tonight" ? "tonight:" + (liveSession() ? "live" : isHost() ? "setup" + ((ui.draft || {}).step || 1) : "idle") : ui.tab, enter = key !== ui.lastKey ? "enter" : "";
   ui.lastKey = key;
@@ -661,17 +695,20 @@ function homeView(enter) {
     <div class="home-links">
       <button data-act="tab" data-tab="log"><span aria-hidden="true">\u2663\uFE0E</span>Session log</button>
       <button data-act="tab" data-tab="hands"><span aria-hidden="true">\u2665\uFE0E</span>Hand rankings</button>
+      ${games.length > 1 ? `<button data-act="switch-game"><span aria-hidden="true">\u2666\uFE0E</span>Switch game</button>` : ""}
     </div>
     <button class="hostbtn ${host ? "on" : ""}" data-act="${host ? "settings" : "host-open"}">${host ? "Host settings" : "Host sign-in"}</button>
   </div>`;
 }
 
 // The name is only known once someone has signed in on this device; config.js can supply it for first visits.
-const gateName = () => ls.get("name") || CFG.gameName || "Poker Night";
+const gateName = () => thisGame().name || CFG.gameName || "Poker Night";
 function gateView(err = "") {
   return `
   <div class="gate">
     <div class="suits" aria-hidden="true">&spades;&#xFE0E;&hearts;&#xFE0E;&clubs;&#xFE0E;&diams;&#xFE0E;</div>
+    ${games.length > 1 ? `<div class="eyebrow" style="margin-bottom:10px">Choose your game</div>
+    <div class="gpick" role="radiogroup" aria-label="Game">${games.map(g => `<button class="gp" role="radio" aria-checked="${g.id === game}" data-act="pick-game" data-id="${esc(g.id)}">${esc(g.name)}</button>`).join("")}</div>` : ""}
     <h1>${esc(gateName())}</h1>
     <p>Enter the table PIN to see the books.</p>
     <form class="qcard" data-form="gate" autocomplete="off">
@@ -1060,6 +1097,16 @@ function renderSheet() {
       <div class="blk"><div class="eyebrow" style="margin-bottom:12px">Players</div>
         ${S.players.filter(p => !p.archived).map(p => `<div class="inline" style="margin-bottom:8px;align-items:center"><input class="in" style="margin:0;font-family:var(--body)" data-rename="${p.id}" maxlength="24" value="${esc(p.name)}" aria-label="Rename ${esc(p.name)}"><button class="btn sm danger" data-act="del-player" data-id="${p.id}" data-confirm>Delete</button></div>`).join("") || `<p class="dim small">Players appear here once added.</p>`}
         ${S.players.some(p => !p.archived) ? `<p class="dim small" style="margin:6px 0 0">Edit a name and tap away to rename it everywhere. Deleting someone who has played takes them off the player list, but past nights and any balance they still have stay on the books.</p>` : ""}</div>
+      ${thisGame().house ? `<div class="blk"><div class="eyebrow" style="margin-bottom:12px">Games</div>
+        ${games.map(g => `<div class="xfer"><div class="t">${esc(g.name)}${g.house ? ` <span class="dim small">this one</span>` : ""}</div>${g.house ? "" : `<button class="btn sm danger" data-act="del-game" data-id="${esc(g.id)}" data-confirm>Delete</button>`}</div>`).join("")}
+        <form data-form="new-game" autocomplete="off" style="margin-top:16px">
+          <label class="f">Start another game<input class="in" id="ng-name" maxlength="40" placeholder="Game name" style="font-family:var(--body)"></label>
+          <div class="grid2" style="margin-top:12px">
+            <label class="f">Its table PIN<input class="in" id="ng-view" maxlength="4" placeholder="4 characters" autocapitalize="characters" style="text-transform:uppercase"></label>
+            <label class="f">Its host PIN<input class="in" id="ng-host" maxlength="24" placeholder="4 or more" autocapitalize="characters" style="text-transform:uppercase"></label></div>
+          <div class="err" id="ng-err" role="alert"></div>
+          <button class="btn ghost">Create game</button>
+          <p class="dim small" style="margin:10px 0 0">Each game has its own players, tab, log and PINs. Nothing is shared between them. Deleting a game erases all of its history for good.</p></form></div>` : ""}
       <div class="blk"><div class="actions" style="margin:0"><button class="btn ghost sm" data-act="backup">Copy a backup</button><button class="btn ghost sm" data-act="leave-host">Leave host mode</button><button class="btn ghost sm" data-act="signout">Sign out</button></div></div>
       <button class="btn wide" data-act="close-sheet">Done</button>`;
   }
@@ -1119,7 +1166,16 @@ const actions = {
   door(el) { el.classList.add("go"); setTimeout(() => actions.tab(el), matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 200); },
   player(el) { ui.player = el.dataset.id; render(); scrollTo(0, 0); },
   back() { ui.player = null; render(); },
-  me(el) { ui.me = ui.me === el.dataset.id ? null : el.dataset.id; ls.set("me", ui.me); render(); },
+  me(el) { ui.me = ui.me === el.dataset.id ? null : el.dataset.id; ls.set(pinKey("me"), ui.me); render(); },
+  "pick-game"(el) { enterGame(el.dataset.id); },
+  "switch-game"() { S = null; role = null; ui.sheet = null; ui.lastKey = null; render(); scrollTo(0, 0); },
+  async "del-game"(el) {
+    try {
+      const res = await store.remove(hostPin, el.dataset.id);
+      if (!res.ok) return toast("Couldn't delete that game.");
+      games = await store.games(); renderSheet(); toast("Game deleted");
+    } catch { toast("No connection. Nothing was deleted."); }
+  },
   "host-open"() { ui.sheet = { type: "host" }; renderSheet(); },
   settings() { ui.sheet = { type: "settings" }; renderSheet(); },
   "close-sheet"() { ui.sheet = null; render(); },
@@ -1194,27 +1250,44 @@ const actions = {
     const text = JSON.stringify(S);
     try { await navigator.clipboard.writeText(text); toast("Backup copied. Paste it somewhere safe."); } catch { toast("Couldn't copy on this device."); }
   },
-  "leave-host"() { hostPin = null; ls.set("hostPin", null); role = "viewer"; ui.sheet = null; if (!pin) return actions.signout(); render(); },
-  signout() { ui.tab = "home"; ui.player = null; ui.lastKey = null; pin = hostPin = null; ls.set("pin", null); ls.set("hostPin", null); S = null; role = null; ui.sheet = null; render(); renderSheet(); }
+  "leave-host"() { hostPin = null; ls.set(pinKey("hostPin"), null); role = "viewer"; ui.sheet = null; if (!pin) return actions.signout(); render(); },
+  signout() { ui.tab = "home"; ui.player = null; ui.lastKey = null; ui.draft = null; pin = hostPin = null; ls.set(pinKey("pin"), null); ls.set(pinKey("hostPin"), null); S = null; role = null; ui.sheet = null; render(); renderSheet(); }
 };
 
+// Opens a game: straight in if this device already has its PIN, otherwise the PIN card.
+async function enterGame(id) {
+  game = id; ls.set("game", id); usePins();
+  S = null; role = null; ui.tab = "home"; ui.player = null; ui.lastKey = null; ui.draft = null; ui.sheet = null; ui.txOpt = 0;
+  if (pin || hostPin) { try { await load(); } catch {} }
+  render(); scrollTo(0, 0);
+}
+
 const forms = {
+  async "new-game"() {
+    const name = cleanName($("#ng-name").value), v = $("#ng-view").value.trim(), h = $("#ng-host").value.trim(), err = $("#ng-err");
+    if (!name) { err.textContent = "Give the game a name."; return; }
+    try {
+      const res = await store.create(hostPin, name, v, h);
+      if (!res.ok) { err.textContent = { name_taken: "There's already a game with that name.", view_length: "The table PIN must be exactly 4 characters.", host_length: "The host PIN needs at least 4 characters.", same: "The two PINs must be different.", limit: "That's the most games this site can hold.", bad_pin: "Your host sign-in has expired." }[res.reason] || "Couldn't create the game."; return; }
+      games = await store.games(); renderSheet(); toast(name + " is ready. Pick it on the PIN screen.");
+    } catch { err.textContent = "Couldn't reach the books."; }
+  },
   async gate() {
     const v = $("#gate-pin").value.trim();
     if (!v) return;
     try {
-      const res = await store.load(v);
+      const res = await store.load(game, v);
       if (!res.ok) return gateError("That PIN doesn't match. Check with the host.");
-      if (res.role === "host") { hostPin = v; ls.set("hostPin", v); } else { pin = v; ls.set("pin", v); }
+      if (res.role === "host") { hostPin = v; ls.set(pinKey("hostPin"), v); } else { pin = v; ls.set(pinKey("pin"), v); }
       S = normalize(res.state); version = res.version; role = res.role; render();
     } catch { gateError("Couldn't reach the books. Check your connection."); }
   },
   async host() {
     const v = $("#host-pin").value.trim();
     try {
-      const res = await store.load(v);
+      const res = await store.load(game, v);
       if (!res.ok || res.role !== "host") { $("#host-err").textContent = "That isn't the host PIN."; return; }
-      hostPin = v; ls.set("hostPin", v); S = normalize(res.state); version = res.version; role = "host"; ui.sheet = null; render(); toast("Host mode on");
+      hostPin = v; ls.set(pinKey("hostPin"), v); S = normalize(res.state); version = res.version; role = "host"; ui.sheet = null; render(); toast("Host mode on");
     } catch { $("#host-err").textContent = "Couldn't reach the books."; }
   },
   roster() {
@@ -1243,10 +1316,10 @@ const forms = {
     const v = $("#set-view").value.trim(), h = $("#set-host").value.trim(), err = $("#pins-err");
     if (!v && !h) { err.textContent = "Enter a new PIN in at least one box."; return; }
     try {
-      const res = await store.setPins(hostPin, v || null, h || null);
+      const res = await store.setPins(game, hostPin, v || null, h || null);
       if (!res.ok) { err.textContent = { view_length: "The table PIN must be exactly 4 characters.", host_length: "The host PIN needs at least 4 characters.", same: "The two PINs must be different.", bad_pin: "Your host sign-in has expired." }[res.reason] || "Couldn't change the PINs."; return; }
-      if (h) { hostPin = h; ls.set("hostPin", h); }
-      if (v && pin) { pin = v; ls.set("pin", v); }
+      if (h) { hostPin = h; ls.set(pinKey("hostPin"), h); }
+      if (v && pin) { pin = v; ls.set(pinKey("pin"), v); }
       ui.sheet = null; render(); toast("PINs changed");
     } catch { err.textContent = "Couldn't reach the books."; }
   }
@@ -1296,8 +1369,12 @@ setInterval(poll, 15000);
 /* ---------- boot ---------- */
 (async () => {
   const h = location.hash.slice(1); if (["tonight", "ledger", "log", "hands"].includes(h)) ui.tab = h;
+  try { games = await store.games(); } catch { games = []; }
+  if (!Array.isArray(games) || !games.length) games = [{ id: "main", name: CFG.gameName || "Poker Night", house: true }];
+  if (!games.some(g => g.id === game)) game = games[0].id;
+  usePins();
   if (pin || hostPin) {
-    try { if (!(await load())) { pin = null; ls.set("pin", null); } }
+    try { if (!(await load())) { pin = null; ls.set(pinKey("pin"), null); } }
     catch { $("#app").innerHTML = gateView("Couldn't reach the books. Check your connection."); return; }
   }
   render();
