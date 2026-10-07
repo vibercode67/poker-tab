@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a2c21">
 <meta name="robots" content="noindex">
-<title>The Tab</title>
+<title>Poker Night</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap">
@@ -13,6 +13,7 @@
 /* Layout: one phone-width column on green baize, gold-ruled sections, a four-suit tab bar pinned to the bottom. */
 :root {
   color-scheme: dark;
+  --cardback: radial-gradient(circle at 50% 50%, #d9bd6a 0 5px, #7d0f1a 5.5px 9px, #d9bd6a 9.5px 11px, transparent 11.5px), repeating-linear-gradient(45deg, rgba(255, 255, 255, .2) 0 1.5px, transparent 1.5px 9px), repeating-linear-gradient(-45deg, rgba(255, 255, 255, .2) 0 1.5px, transparent 1.5px 9px), radial-gradient(circle at 50% 50%, #b3202c, #7d0f1a);
   --felt: #0f3d2e;
   --felt-lit: #16543f;
   --felt-deep: #0a2c21;
@@ -230,7 +231,21 @@ nav.tabs button[aria-current="page"] { color: var(--gold); border-top-color: var
 .gate .suits { font: 400 22px Georgia, serif; letter-spacing: .5em; color: var(--gold); margin-bottom: 18px; padding-left: .5em; }
 .gate h1 { font-size: 40px; margin-bottom: 10px; }
 .gate p { color: var(--ivory-dim); margin: 0 0 26px; }
-.gate form { width: 100%; max-width: 280px; }
+.gate h1 { font-size: clamp(34px, 10vw, 46px); line-height: 1.05; }
+.gate .qcard { position: relative; width: 244px; max-width: 100%; aspect-ratio: 5 / 7.5; border-radius: 16px; background: var(--card); color: var(--ink); padding: 52px 26px 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 1px 0 #fff inset, 0 26px 50px rgba(0, 0, 0, .55); animation: winflip .9s cubic-bezier(.2, .8, .2, 1) .3s backwards; }
+.qcard::after { content: ""; position: absolute; inset: 8px; border: 1px solid rgba(23, 35, 29, .16); border-radius: 10px; pointer-events: none; }
+.qcard .corner { position: absolute; top: 14px; left: 16px; font: 700 30px/1 var(--display); color: var(--suit-red); display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.qcard .corner i { font: 400 22px/1 Georgia, serif; }
+.qcard .corner.br { top: auto; left: auto; bottom: 14px; right: 16px; transform: rotate(180deg); }
+.q-crown { font: 400 58px/1 Georgia, serif; color: var(--suit-red); }
+.qcard label { font: 600 11px var(--body); letter-spacing: .18em; text-transform: uppercase; color: #55645a; }
+.q-pin { width: 100%; background: none; border: 0; border-bottom: 2px solid var(--ink); border-radius: 0; padding: 4px 0 6px .35em; text-align: center; font: 700 30px/1.1 var(--display); letter-spacing: .35em; text-transform: uppercase; color: var(--ink); color-scheme: light; }
+.q-pin:focus { outline: none; border-bottom-color: var(--suit-red); }
+.q-pin::placeholder { color: rgba(23, 35, 29, .25); }
+.qcard .err { color: var(--suit-red); font-size: 13px; line-height: 1.25; min-height: 17px; margin: 0; }
+.qcard .btn { position: relative; z-index: 1; background: var(--suit-red); border-color: var(--suit-red); color: var(--card); min-height: 42px; padding: 8px 22px; }
+.qcard.shake { animation: shake .4s; }
+@keyframes shake { 20%, 60% { transform: translateX(-9px) rotate(-1.5deg); } 40%, 80% { transform: translateX(9px) rotate(1.5deg); } }
 .pin { text-align: center; text-transform: uppercase; letter-spacing: .5em; padding-left: calc(12px + .5em); font-size: 26px; min-height: 60px; }
 .err { color: var(--down); font-size: 14px; min-height: 21px; margin: 10px 0; }
 .demo { margin-top: 26px; font: 400 13px/1.6 var(--mono); color: var(--ivory-dim); max-width: 34ch; }
@@ -242,17 +257,17 @@ nav.tabs button[aria-current="page"] { color: var(--gold); border-top-color: var
 .rule { display: flex; align-items: center; gap: 12px; width: 100%; max-width: 260px; margin: 22px 0 6px; color: var(--gold); font: 400 13px Georgia, serif; }
 .rule::before, .rule::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 .doors { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; margin: 34px 0 40px; }
-.door { --tilt: -3deg; position: relative; aspect-ratio: 5 / 7.4; border: 0; border-radius: 14px; background: var(--card); color: var(--ink); padding: 34px 12px 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 1px 0 #fff inset, 0 18px 34px rgba(0, 0, 0, .42), 0 2px 0 rgba(0, 0, 0, .3); transform: rotate(var(--tilt)); transition: transform .28s cubic-bezier(.2, .8, .2, 1), opacity .22s, box-shadow .28s; }
+.door { --tilt: -3deg; position: relative; aspect-ratio: 5 / 7.4; border: 0; border-radius: 14px; background: var(--card); color: var(--ink); padding: 30px 12px 58px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 1px 0 #fff inset, 0 18px 34px rgba(0, 0, 0, .42), 0 2px 0 rgba(0, 0, 0, .3); transform: rotate(var(--tilt)); transition: transform .28s cubic-bezier(.2, .8, .2, 1), opacity .22s, box-shadow .28s; }
 .door::after { content: ""; position: absolute; inset: 7px; border: 1px solid rgba(23, 35, 29, .16); border-radius: 9px; pointer-events: none; }
 .door.d2 { --tilt: 3deg; margin-top: 16px; }
 .door.red .corner, .door.red .pip { color: var(--suit-red); }
 .door:hover, .door:focus-visible { transform: rotate(0) translateY(-8px); box-shadow: 0 1px 0 #fff inset, 0 26px 44px rgba(0, 0, 0, .5), 0 2px 0 rgba(0, 0, 0, .3); }
 .door:active { transform: rotate(0) translateY(-2px) scale(.98); }
 .door.go { transform: rotate(0) translateY(-26px) scale(1.06); opacity: 0; }
-.door .corner { position: absolute; top: 13px; left: 14px; font: 700 17px/1 var(--display); display: flex; flex-direction: column; align-items: center; gap: 1px; }
-.door .corner i { font: 400 14px/1 Georgia, serif; }
+.door .corner { position: absolute; top: 13px; left: 14px; font: 700 30px/1 var(--display); display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.door .corner i { font: 400 22px/1 Georgia, serif; }
 .door .corner.br { top: auto; left: auto; bottom: 13px; right: 14px; transform: rotate(180deg); }
-.door .pip { font: 400 44px/1 Georgia, serif; }
+.door .pip { font: 400 56px/1 Georgia, serif; }
 .door-t { font: 700 clamp(18px, 5.4vw, 22px)/1.12 var(--display); text-wrap: balance; }
 .door-s { font-size: 13px; line-height: 1.3; color: #55645a; text-wrap: balance; }
 .door-s .live-dot { background: #2f9e58; }
@@ -320,14 +335,14 @@ nav.tabs button[aria-current="page"] { color: var(--gold); border-top-color: var
 /* standings as a hand of cards */
 .hand-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 210px)); justify-content: center; gap: 16px; perspective: 900px; }
 .scard:last-child:nth-child(odd) { grid-column: 1 / -1; justify-self: center; width: calc(50% - 8px); }
-.scard .s-pip { font: 400 38px/1 Georgia, serif; margin-bottom: 4px; }
+.scard .s-pip { font: 400 58px/1 Georgia, serif; margin-bottom: 2px; }
 .scard.red .s-pip { color: var(--suit-red); }
-.scard { position: relative; border: 0; border-radius: 12px; background: var(--card); color: var(--ink); padding: 40px 10px 36px; aspect-ratio: 5 / 7; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; box-shadow: 0 1px 0 #fff inset, 0 12px 22px rgba(0, 0, 0, .38); transition: transform .25s cubic-bezier(.2, .8, .2, 1), box-shadow .25s; }
+.scard { position: relative; border: 0; border-radius: 12px; background: var(--card); color: var(--ink); padding: 30px 10px 30px; aspect-ratio: 5 / 7; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; box-shadow: 0 1px 0 #fff inset, 0 12px 22px rgba(0, 0, 0, .38); transition: transform .25s cubic-bezier(.2, .8, .2, 1), box-shadow .25s; }
 .scard::after { content: ""; position: absolute; inset: 6px; border: 1px solid rgba(23, 35, 29, .14); border-radius: 8px; pointer-events: none; }
 .scard:hover, .scard:focus-visible { transform: translateY(-6px) rotate(-1.5deg); box-shadow: 0 1px 0 #fff inset, 0 20px 30px rgba(0, 0, 0, .46); }
-.scard .corner { position: absolute; top: 11px; left: 12px; font: 700 16px/1 var(--display); display: flex; flex-direction: column; align-items: center; gap: 1px; }
-.scard .corner i { font: 400 13px/1 Georgia, serif; }
-.scard .corner.br { top: auto; left: auto; bottom: 11px; right: 12px; transform: rotate(180deg); }
+.scard .corner { position: absolute; top: 12px; left: 13px; font: 700 30px/1 var(--display); display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.scard .corner i { font: 400 22px/1 Georgia, serif; }
+.scard .corner.br { top: auto; left: auto; bottom: 12px; right: 13px; transform: rotate(180deg); }
 .scard.red .corner { color: var(--suit-red); }
 .scard .s-nm { font: 700 19px/1.15 var(--display); overflow-wrap: anywhere; }
 .scard .s-amt { font: 700 20px var(--body); }
@@ -360,8 +375,6 @@ nav.tabs button[aria-current="page"] { color: var(--gold); border-top-color: var
 @keyframes dropchip { from { opacity: 0; transform: translateY(-22px); } }
 .enter .stack i { animation: dropchip .35s ease-out backwards; animation-delay: calc(var(--k) * 70ms + 1s); }
 .seat-node.new { animation: dealseat .8s cubic-bezier(.2, .8, .2, 1) backwards; }
-.dbtn { position: absolute; top: -7px; left: calc(50% + 12px); width: 21px; height: 21px; border-radius: 50%; background: #fff; color: var(--ink); font: 700 11px/21px var(--body); text-align: center; box-shadow: 0 0 0 2px var(--ink), 0 3px 6px rgba(0, 0, 0, .5); }
-.dbtn.moved { animation: pop .45s cubic-bezier(.3, 1.6, .5, 1); }
 .pay-chip, .flychip { background: radial-gradient(circle, #b3261e 0 36%, #fbf6e6 37% 47%, transparent 48%), repeating-conic-gradient(#b3261e 0 22.5deg, #fbf6e6 22.5deg 45deg); border: 1px solid #6f1711; box-shadow: 0 2px 5px rgba(0, 0, 0, .5); }
 .pay-chip { width: 22px; height: 22px; bottom: -1px; }
 .flychip { width: 26px; height: 26px; }
@@ -369,12 +382,14 @@ nav.tabs button[aria-current="page"] { color: var(--gold); border-top-color: var
 
 /* picking players: face-down until they're in */
 .pgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; perspective: 800px; }
-.pcard { position: relative; aspect-ratio: 5 / 6.6; border-radius: 10px; border: 3px solid var(--card); background: repeating-linear-gradient(45deg, #7a1f2b 0 5px, #932c3a 5px 10px); color: var(--ivory); padding: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 6px 12px rgba(0, 0, 0, .35); transition: transform .2s, box-shadow .2s; }
-.pcard .pc-name { font: 700 15px/1.15 var(--display); background: rgba(6, 26, 19, .85); padding: 5px 8px; border-radius: 6px; max-width: 100%; overflow-wrap: anywhere; }
+.pcard { position: relative; aspect-ratio: 5 / 6.8; border-radius: 10px; border: 4px solid var(--card); background: var(--cardback); color: var(--ink); padding: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 6px 12px rgba(0, 0, 0, .35); transition: transform .2s, box-shadow .2s; }
+.pcard::before { content: ""; position: absolute; inset: 4px; border: 1.5px solid rgba(217, 189, 106, .85); border-radius: 5px; pointer-events: none; }
+.pcard[aria-pressed="true"]::before { border-color: rgba(23, 35, 29, .14); }
+.pcard .pc-name { position: relative; font: 700 19px/1.12 var(--display); background: var(--card); padding: 6px 9px; border-radius: 4px; max-width: 100%; overflow-wrap: anywhere; box-shadow: 0 0 0 1.5px #d9bd6a, 0 3px 6px rgba(0, 0, 0, .4); }
 .pcard .pc-suit, .pcard .pc-in { display: none; }
 .pcard[aria-pressed="true"] { background: var(--card); color: var(--ink); transform: translateY(-5px); box-shadow: 0 0 0 2px var(--gold), 0 14px 20px rgba(0, 0, 0, .45); }
-.pcard[aria-pressed="true"] .pc-name { background: none; padding: 0 2px; font-size: 16px; }
-.pcard[aria-pressed="true"] .pc-suit { display: block; font: 400 24px/1 Georgia, serif; }
+.pcard[aria-pressed="true"] .pc-name { background: none; padding: 0 2px; font-size: 21px; box-shadow: none; }
+.pcard[aria-pressed="true"] .pc-suit { display: block; font: 400 30px/1 Georgia, serif; }
 .pcard[aria-pressed="true"].red .pc-suit { color: var(--suit-red); }
 .pcard[aria-pressed="true"] .pc-in { display: block; font: 700 10px var(--body); letter-spacing: .18em; text-transform: uppercase; color: #1d7a43; }
 .pcard.flip { animation: cardflip .42s ease-in-out; }
@@ -387,7 +402,7 @@ nav.tabs button[aria-current="page"] { color: var(--gold); border-top-color: var
 .curtain .eyebrow { animation: rise .6s backwards; }
 .curtain p { animation: rise .6s .3s backwards; }
 .deck { position: relative; width: 0; height: 0; margin: 170px 0 160px; }
-.fly { position: absolute; left: -27px; top: -38px; width: 54px; height: 76px; border-radius: 7px; border: 3px solid var(--card); background: repeating-linear-gradient(45deg, #7a1f2b 0 5px, #932c3a 5px 10px); box-shadow: 0 6px 12px rgba(0, 0, 0, .45); animation: riffle .5s ease-in-out .3s 3, flyout .8s cubic-bezier(.2, .8, .2, 1) forwards; animation-delay: .3s, calc(var(--i) * 260ms + 2.1s); }
+.fly { position: absolute; left: -27px; top: -38px; width: 54px; height: 76px; border-radius: 7px; border: 4px solid var(--card); background: var(--cardback); box-shadow: 0 6px 12px rgba(0, 0, 0, .45); animation: riffle .5s ease-in-out .3s 3, flyout .8s cubic-bezier(.2, .8, .2, 1) forwards; animation-delay: .3s, calc(var(--i) * 260ms + 2.1s); }
 @keyframes riffle { 25% { transform: translateX(calc(var(--d) * 30px)) rotate(calc(var(--d) * 7deg)); } 75% { transform: translateX(calc(var(--d) * -30px)) rotate(calc(var(--d) * -7deg)); } }
 .curtain .btn { animation: rise .6s backwards; }
 .curtain.manual { cursor: default; }
@@ -594,8 +609,8 @@ async function poll() {
 /* ---------- views ---------- */
 function render() {
   const app = $("#app");
-  if (!S) { app.innerHTML = gateView(); return; }
-  document.title = S.group.name;
+  if (!S) { document.title = gateName(); app.innerHTML = gateView(); return; }
+  document.title = S.group.name; ls.set("name", S.group.name);
   const n = openSessions().length;
   const key = ui.player ? "p:" + ui.player : ui.tab === "tonight" ? "tonight:" + (liveSession() ? "live" : isHost() ? "setup" + ((ui.draft || {}).step || 1) : "idle") : ui.tab, enter = key !== ui.lastKey ? "enter" : "";
   ui.lastKey = key;
@@ -627,9 +642,9 @@ function homeView(enter) {
   const t1 = s ? "Tonight's game" : host ? "Start a new game" : "Tonight's game";
   const s1 = s ? `<span class="live-dot"></span>Live &middot; ${money(pot(s))} in play` : host ? "Set the buy-in and deal everyone in" : "No game on right now";
   const s2 = me ? `${esc(me.name)}, you're ${signed(bal[me.id] || 0)}` : top && top[1] > 0 ? `${esc(pname(top[0]))} leads at ${signed(top[1])}` : "Balances and who owes what";
-  const door = (cls, tab, suit, title, sub) => `<button class="door ${cls}" data-act="door" data-tab="${tab}">
-      <span class="corner" aria-hidden="true">A<i>${suit}</i></span><span class="pip" aria-hidden="true">${suit}</span>
-      <span class="door-t">${title}</span><span class="door-s">${sub}</span><span class="corner br" aria-hidden="true">A<i>${suit}</i></span></button>`;
+  const door = (cls, tab, rank, suit, title, sub) => `<button class="door ${cls}" data-act="door" data-tab="${tab}">
+      <span class="corner" aria-hidden="true">${rank}<i>${suit}</i></span><span class="pip" aria-hidden="true">${suit}</span>
+      <span class="door-t">${title}</span><span class="door-s">${sub}</span><span class="corner br" aria-hidden="true">${rank}<i>${suit}</i></span></button>`;
   return `
   <div class="home ${enter}">
     <div class="suits" aria-hidden="true">\u2660\uFE0E\u2665\uFE0E\u2663\uFE0E\u2666\uFE0E</div>
@@ -637,8 +652,8 @@ function homeView(enter) {
     <h1>${esc(S.group.name)}</h1>
     <div class="rule" aria-hidden="true">\u2666\uFE0E</div>
     <div class="doors">
-      ${door("d1", "tonight", "\u2660\uFE0E", t1, s1)}
-      ${door("d2 red", "ledger", "\u2666\uFE0E", "View the tab", s2)}
+      ${door("d1", "tonight", "A", "\u2660\uFE0E", t1, s1)}
+      ${door("d2 red", "ledger", "K", "\u2666\uFE0E", "View the tab", s2)}
     </div>
     <div class="home-links">
       <button data-act="tab" data-tab="log"><span aria-hidden="true">\u2663\uFE0E</span>Session log</button>
@@ -648,20 +663,30 @@ function homeView(enter) {
   </div>`;
 }
 
+// The name is only known once someone has signed in on this device; config.js can supply it for first visits.
+const gateName = () => ls.get("name") || CFG.gameName || "Poker Night";
 function gateView(err = "") {
   return `
   <div class="gate">
     <div class="suits" aria-hidden="true">&spades;&#xFE0E;&hearts;&#xFE0E;&clubs;&#xFE0E;&diams;&#xFE0E;</div>
-    <h1>The Tab</h1>
+    <h1>${esc(gateName())}</h1>
     <p>Enter the table PIN to see the books.</p>
-    <form data-form="gate" autocomplete="off">
-      <label class="f" for="gate-pin">Table PIN</label>
-      <input class="in pin" id="gate-pin" maxlength="12" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-describedby="gate-err">
+    <form class="qcard" data-form="gate" autocomplete="off">
+      <span class="corner" aria-hidden="true">Q<i>&hearts;&#xFE0E;</i></span>
+      <span class="q-crown" aria-hidden="true">&#x265B;&#xFE0E;</span>
+      <label for="gate-pin">Table PIN</label>
+      <input class="q-pin" id="gate-pin" maxlength="12" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-describedby="gate-err">
       <div class="err" id="gate-err" role="alert">${esc(err)}</div>
-      <button class="btn wide">Take a seat</button>
+      <button class="btn">Take a seat</button>
+      <span class="corner br" aria-hidden="true">Q<i>&hearts;&#xFE0E;</i></span>
     </form>
     ${REMOTE ? "" : `<p class="demo">Demo mode. Data stays on this device until the database is connected. Table PIN DEAL, host PIN BANKER.</p>`}
   </div>`;
+}
+function gateError(msg) {
+  const card = $(".qcard"); if (!card) { $("#app").innerHTML = gateView(msg); return; }
+  $("#gate-err").textContent = msg; card.classList.remove("shake"); void card.offsetWidth; card.classList.add("shake");
+  const i = $("#gate-pin"); i.select(); i.focus();
 }
 
 /* --- Tonight --- */
@@ -742,15 +767,13 @@ function liveView(s) {
       const a = (-90 + i * 360 / n) * Math.PI / 180, k = s.entries.filter(e => e.playerId === id).length, b = buyin(s, id);
       return `<button class="seat-node ${ui.newSeat === id ? "new" : ""}" style="left:${(50 + 37 * Math.cos(a)).toFixed(2)}%;top:${(50 + 41 * Math.sin(a)).toFixed(2)}%;--i:${i}" data-act="${host ? "seat-open" : "player"}" data-id="${id}">
         <span class="av ${i % 2 ? "red" : ""} ${hasCount(s, id) ? "done" : ""}" style="--r:${[-5, 4, -3, 5][i % 4]}deg" aria-hidden="true">${esc(initials(pname(id)))}<i>${["\u2660\uFE0E", "\u2665\uFE0E", "\u2663\uFE0E", "\u2666\uFE0E"][i % 4]}</i></span>
-        ${s.dealer === id ? `<span class="dbtn ${ui.dealerMoved ? "moved" : ""}" title="Dealer">D</span>` : ""}
         <span class="nm">${esc(pname(id))}</span>
         <span class="sd">${k} buy-in${k === 1 ? "" : "s"} &middot; ${money(b).replace(".00", "")}</span>
         <span class="sd">${chipsFmt(toChips(s, b))} chips</span></button>`;
     }).join("")}
   </div>
   ${host ? `<section>
-    <div style="text-align:center;margin:0 0 22px"><button class="btn sm ghost" data-act="pass-button">Pass the dealer button</button>
-      <p class="dim small" style="margin:10px 0 0">Tap a player to add a rebuy or fix a buy-in.</p></div>
+    <p class="dim small" style="text-align:center;margin:0 0 18px">Tap a player to add a rebuy or fix a buy-in.</p>
     ${others.length ? `<div class="eyebrow" style="margin-bottom:10px">Seat a latecomer</div><div class="picks">${others.map(pl => `<button class="pick" data-act="seat-add" data-id="${pl.id}">+ ${esc(pl.name)}</button>`).join("")}</div>` : ""}
     <form class="inline" data-form="latecomer" style="margin-top:12px">
       <label class="f">Someone new<input class="in" id="late-name" maxlength="24" autocomplete="off" style="font-family:var(--body)"></label>
@@ -852,7 +875,6 @@ function ledgerView() {
       <div class="sec-head"><h2>Standings</h2><span class="dim small">${open.length} night${open.length === 1 ? "" : "s"} since ${esc(fmtDate(open.map(s => s.date).sort()[0]))}</span></div>
       <div class="hand-grid">${rows.map(([id, v], i) => { const rk = rows.length < 2 ? "A" : RANKS[Math.round(i * 12 / (rows.length - 1))], su = v < 0 ? "\u2665\uFE0E" : "\u2660\uFE0E";
         return `<button class="scard ${v < 0 ? "red" : ""}" style="--i:${i}" data-act="player" data-id="${id}" aria-label="${esc(pname(id))}, ${signed(v)}"><span class="corner" aria-hidden="true">${rk}<i>${su}</i></span><span class="s-pip" aria-hidden="true">${su}</span><span class="s-nm">${esc(pname(id))}</span><span class="s-amt ${tone(v)}">${signed(v)}</span><span class="corner br" aria-hidden="true">${rk}<i>${su}</i></span></button>`; }).join("")}</div>
-      <p class="dim small" style="margin-top:12px">The leader holds the ace, last place holds the two. Spades are in the black, hearts are in the red. Tap a card for that player's history.</p>
     </section>
     <section>
       <div class="sec-head"><h2>If you settled today</h2>${opts.length > 1 ? `<span class="dim small">Option ${oi + 1} of ${opts.length}</span>` : ""}</div>
@@ -1107,10 +1129,6 @@ const actions = {
     el.classList.remove("flip"); void el.offsetWidth; el.classList.add("flip");
     setTimeout(() => el.setAttribute("aria-pressed", on), calm() ? 0 : 200);
   },
-  "pass-button"() {
-    ui.dealerMoved = true; setTimeout(() => (ui.dealerMoved = false), 800);
-    mutate(st => { const s = st.sessions.find(x => x.status === "live"); if (!s) return false; const ids = seats(s); s.dealer = ids[(ids.indexOf(s.dealer) + 1) % ids.length]; });
-  },
   "wiz-next"() {
     const d = ui.draft;
     if (!(toCents(d.cash) > 0) || !(parseFloat(d.chips) > 0)) return toast("Enter the buy-in and the chips it buys.");
@@ -1123,7 +1141,7 @@ const actions = {
     if (d.picked.length < 2) return toast("Seat at least two players.");
     const ok = await mutate(st => {
       if (st.sessions.some(s => s.status === "live")) return false;
-      const s = { id: uid(), date: d.date || today(), status: "live", startedAt: new Date().toISOString(), cashPerBuyin: cash, chipsPerBuyin: chips, entries: [], counts: {}, results: {}, notes: "", settlementId: null, dealer: d.picked[0] };
+      const s = { id: uid(), date: d.date || today(), status: "live", startedAt: new Date().toISOString(), cashPerBuyin: cash, chipsPerBuyin: chips, entries: [], counts: {}, results: {}, notes: "", settlementId: null };
       d.picked.forEach(id => addEntry(s, id, cash));
       st.sessions.push(s);
     }, { quiet: true });
@@ -1184,10 +1202,10 @@ const forms = {
     if (!v) return;
     try {
       const res = await store.load(v);
-      if (!res.ok) { $("#app").innerHTML = gateView("That PIN doesn't match. Check with the host."); $("#gate-pin").focus(); return; }
+      if (!res.ok) return gateError("That PIN doesn't match. Check with the host.");
       if (res.role === "host") { hostPin = v; ls.set("hostPin", v); } else { pin = v; ls.set("pin", v); }
       S = normalize(res.state); version = res.version; role = res.role; render();
-    } catch { $("#app").innerHTML = gateView("Couldn't reach the books. Check your connection."); }
+    } catch { gateError("Couldn't reach the books. Check your connection."); }
   },
   async host() {
     const v = $("#host-pin").value.trim();
