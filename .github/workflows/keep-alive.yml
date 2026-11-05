@@ -1,10 +1,10 @@
-# Keeps the poker tab's database awake. Supabase pauses free projects after a week
-# with no activity; this asks it one harmless question twice a week.
+# Keeps the poker tab's database awake. Supabase pauses free projects it sees as
+# inactive; once a day this makes one tiny real write so the project counts as in use.
 name: Keep the books open
 
 on:
   schedule:
-    - cron: "17 9 * * 1,4" # Mondays and Thursdays
+    - cron: "17 13 * * *" # every day
   workflow_dispatch:
 
 permissions:
@@ -17,14 +17,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Ask the database a question
+      - name: Record a heartbeat in the database
         run: |
           url=$(grep -o 'supabaseUrl: *"[^"]*"' config.js | cut -d'"' -f2)
           key=$(grep -o 'supabaseKey: *"[^"]*"' config.js | cut -d'"' -f2)
-          # A deliberately wrong PIN: the database has to look, but reveals nothing.
-          curl --fail --silent --show-error --max-time 30 -X POST "${url%/}/rest/v1/rpc/poker_get" \
-            -H "Content-Type: application/json" -H "apikey: $key" -H "Authorization: Bearer $key" \
-            -d '{"p_pin":"keep-alive"}'
+          for attempt in 1 2 3; do
+            if curl --fail --silent --show-error --max-time 30 -X POST "${url%/}/rest/v1/rpc/poker_heartbeat" \
+                 -H "Content-Type: application/json" -H "apikey: $key" -H "Authorization: Bearer $key" -d '{}'; then
+              exit 0
+            fi
+            sleep 60
+          done
+          echo "::error::The database didn't answer. It may be paused: sign in to Supabase and press Restore."
+          exit 1
 
       # GitHub switches off scheduled jobs in repos with no commits for 60 days.
       # Re-enabling the workflow on each run resets that clock.
